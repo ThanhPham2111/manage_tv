@@ -79,7 +79,7 @@ public class MainForm extends JLayeredPane {
             } else if (index == 1) {
 
             } else if (index == 2) {
-                Application.showForm(new LoginPanel());
+
             } else if (index == 3) {
 
             } else if (index == 5) {
