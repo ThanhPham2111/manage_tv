@@ -24,19 +24,19 @@ import com.formdev.flatlaf.util.UIScale;
 public class Menu extends JPanel {
 
     private final String menuItems[][] = {
-            { "~MAIN~" },
-            { "Quản Lý tài khoản", "dsfdsfds" },
-            { "Email", "Inbox", "Read", "Compost" },
-            { "Quản lý đề thi" },
-            { "Chủ đề/Môn học" },
-            { "~COMPONENT~" },
-            { "Đề thi", "Cropper", "Owl Carousel", "Sweet Alert" },
-            { "Bài thi" },
-            { "~OTHER~" },
-            { "Thống kê" },
-            { "Cài đặt tài khoản", "Đổi mật khẩu ", "Xem chi tiết tài khoản" },
-            { "Special Pages", "Blank page", "Faq", "Invoice", "Profile", "Pricing", "Timeline" },
-            { "Đăng xuất" }
+
+            { "Bán Hàng" },
+            { "Nhập Hàng" },
+            { "Sản Phẩm" },
+            { "Loại Sản Phẩm" },
+            { "Hoá Đơn" },
+            { "Phiếu Nhập" },
+            { "Nhân Viên" },
+            { "Khách Hàng" },
+            { "Nhà Cung Cấp" },
+            { "Tài Khoản" },
+            { "Quyền" },
+            { "Thống Kê" }
     };
 
     public boolean isMenuFull() {

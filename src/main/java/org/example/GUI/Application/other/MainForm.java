@@ -15,7 +15,9 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import org.example.GUI.Application.Application;
-
+import org.example.GUI.Components.FormAuth.LoginForm;
+import org.example.GUI.Components.FormBanHang.FormSell;
+import org.example.GUI.Components.FormProducts.ProductGUI;
 import org.example.GUI.menu.Menu;
 import org.example.GUI.menu.MenuAction;
 
@@ -30,7 +32,7 @@ public class MainForm extends JLayeredPane {
 
         FlatLightLaf.setup();
         init();
-        showForm(new BeginForm("Chào mừng đến với quản lý thi trắc nghiệm"));
+        showForm(new BeginForm("Welcome!"));
         // Display BeginForm by default
 
     }
@@ -75,11 +77,11 @@ public class MainForm extends JLayeredPane {
         menu.addMenuEvent((int index, int subIndex, MenuAction action) -> {
 
             if (index == 0) {
-
+                Application.showForm(new FormSell());
             } else if (index == 1) {
 
             } else if (index == 2) {
-                Application.showForm(new LoginPanel());
+                Application.showForm(new ProductGUI());
             } else if (index == 3) {
 
             } else if (index == 5) {

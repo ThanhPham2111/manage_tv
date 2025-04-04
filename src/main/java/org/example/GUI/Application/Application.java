@@ -8,8 +8,8 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-
 import org.example.GUI.Application.other.MainForm;
+import org.example.GUI.Components.FormAuth.LoginForm;
 
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.FlatLaf;
@@ -21,14 +21,16 @@ public class Application extends javax.swing.JFrame {
 
     private static Application app;
     private final MainForm mainForm;
+    private final LoginForm loginForm;
 
     public Application() {
         initComponents();
         setSize(new Dimension(1366, 768));
         setLocationRelativeTo(null);
         mainForm = new MainForm();
+        loginForm = new LoginForm();
 
-        setContentPane(mainForm);
+        setContentPane(loginForm);
         getRootPane().putClientProperty(FlatClientProperties.FULL_WINDOW_CONTENT, true);
 
     }
@@ -60,7 +62,6 @@ public class Application extends javax.swing.JFrame {
 
     public static void logout() {
         FlatAnimatedLafChange.showSnapshot();
-
 
         FlatAnimatedLafChange.hideSnapshotWithAnimation();
     }
