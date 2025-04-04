@@ -29,12 +29,9 @@ import com.formdev.flatlaf.util.UIScale;
 public class MainForm extends JLayeredPane {
 
     public MainForm() {
-
         FlatLightLaf.setup();
         init();
         showForm(new BeginForm("Welcome!"));
-        // Display BeginForm by default
-
     }
 
     private void init() {
@@ -72,10 +69,8 @@ public class MainForm extends JLayeredPane {
         menuButton.setIcon(new FlatSVGIcon("org/example/GUI/menu/mode/svg/" + icon, 0.8f));
     }
 
-    // goi thanh phan
     private void initMenuEvent() {
         menu.addMenuEvent((int index, int subIndex, MenuAction action) -> {
-
             if (index == 0) {
                 Application.showForm(new FormSell());
             } else if (index == 1) {
@@ -86,7 +81,6 @@ public class MainForm extends JLayeredPane {
 
             } else if (index == 5) {
                 // Application.showForm(new TestForm(panelBody));
-
             } else if (index == 6) {
 
             } else if (index == 7) {
@@ -94,9 +88,7 @@ public class MainForm extends JLayeredPane {
 
                 } else if (subIndex == 2) {
 
-                }
-
-                else if (index == 8) {
+                } else if (index == 8) {
 
                 }
             } else if (index == 9) {
@@ -105,7 +97,6 @@ public class MainForm extends JLayeredPane {
                 action.cancel();
             }
         });
-
     }
 
     private void setMenuFull(boolean full) {
@@ -140,7 +131,6 @@ public class MainForm extends JLayeredPane {
     private JButton menuButton;
 
     private class MainFormLayout implements LayoutManager {
-
         @Override
         public void addLayoutComponent(String name, Component comp) {
         }
@@ -193,5 +183,4 @@ public class MainForm extends JLayeredPane {
             }
         }
     }
-
 }
