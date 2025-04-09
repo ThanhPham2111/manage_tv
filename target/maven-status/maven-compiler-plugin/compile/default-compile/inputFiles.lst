@@ -1,10 +1,16 @@
+C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\BUS\CustomerBUS.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\BUS\ProductBUS.java
+C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\BUS\SupplierBUS.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\BUS\UserBUS.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\ConnectDB\UtilsJDBC.java
+C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DAO\CustomerDAO.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DAO\ProductDAO.java
+C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DAO\SupplierDAO.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DAO\UserDAO.java
+C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DTO\CustomerDTO.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DTO\ProductDTO.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DTO\SessionManager.java
+C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DTO\SupplierDTO.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DTO\UsersDTO.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Application\Application.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Application\other\BeginForm.java
@@ -15,6 +21,9 @@ C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\FormAu
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\FormAuth\SignUpForm.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\FormBanHang\FormSell.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\FormProducts\ProductGUI.java
+C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\FormSupplier\FormNCC.java
+C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\FormSupplier\SupplierDisable.java
+C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\FormSupplier\SupplierGUI.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\menu\Menu.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\menu\MenuAction.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\menu\MenuAnimation.java

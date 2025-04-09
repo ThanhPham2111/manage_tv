@@ -18,6 +18,8 @@ import org.example.GUI.Application.Application;
 import org.example.GUI.Components.FormAuth.LoginForm;
 import org.example.GUI.Components.FormBanHang.FormSell;
 import org.example.GUI.Components.FormProducts.ProductGUI;
+import org.example.GUI.FormCustomer.CustomerGUI;
+import org.example.GUI.FormSupplier.SupplierGUI;
 import org.example.GUI.menu.Menu;
 import org.example.GUI.menu.MenuAction;
 
@@ -84,13 +86,11 @@ public class MainForm extends JLayeredPane {
             } else if (index == 6) {
 
             } else if (index == 7) {
-                if (subIndex == 1) {
+                Application.showForm(new CustomerGUI());
 
-                } else if (subIndex == 2) {
+            } else if (index == 8) {
+                Application.showForm(new SupplierGUI());
 
-                } else if (index == 8) {
-
-                }
             } else if (index == 9) {
                 Application.logout();
             } else {

@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Image;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,22 +21,33 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
+import org.example.BUS.ProductBUS;
+import org.example.BUS.TypeProductBUS;
 import org.example.ConnectDB.UtilsJDBC;
 import org.example.DTO.ProductDTO;
+import org.example.GUI.FormDialog.ProductDialog;
 
 public class ProductGUI extends JPanel {
 
     private JTable table;
     private DefaultTableModel model;
+    private ProductBUS productBus;
+    private TypeProductBUS typeProductBus;
+    private ProductDialog productDialog;
 
     public ProductGUI() {
         setLayout(new BorderLayout());
+        productBus = new ProductBUS();
+        typeProductBus = new TypeProductBUS();
         model = new DefaultTableModel();
         table = new JTable(model);
+        productDialog = new ProductDialog((javax.swing.JFrame) javax.swing.SwingUtilities.getWindowAncestor(this),
+                productBus, typeProductBus, table);
 
         // Initialize components
         initComponents();
@@ -43,12 +55,11 @@ public class ProductGUI extends JPanel {
     }
 
     private void initComponents() {
-        // Phần trên cùng: Panel chứa các nút Thêm, Xóa, Sửa, Xem, Xuất Excel
+        // Phần trên cùng: Panel chứa các nút Thêm, Xóa, Sửa, Xuất Excel (đã xóa Xem)
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         JButton btnAdd = new JButton("Thêm");
         JButton btnDelete = new JButton("Xóa");
         JButton btnEdit = new JButton("Sửa");
-        JButton btnView = new JButton("Xem");
         JButton btnExportExcel = new JButton("Xuất Excel");
 
         // Thêm icon cho các nút với đường dẫn từ classpath
@@ -67,24 +78,17 @@ public class ProductGUI extends JPanel {
             btnEdit.setIcon(editIcon);
         }
 
-        ImageIcon viewIcon = loadImageIcon("/org/example/GUI/resources/images/view.png");
-        if (viewIcon != null) {
-            btnView.setIcon(viewIcon);
-        }
-
         // Tăng kích thước các nút và chừa chỗ cho icon
         Dimension buttonSize = new Dimension(120, 40);
         btnAdd.setPreferredSize(buttonSize);
         btnDelete.setPreferredSize(buttonSize);
         btnEdit.setPreferredSize(buttonSize);
-        btnView.setPreferredSize(buttonSize);
         btnExportExcel.setPreferredSize(buttonSize);
 
-        // Thêm các nút vào panel
+        // Thêm các nút vào panel (không thêm btnView)
         buttonPanel.add(btnAdd);
         buttonPanel.add(btnDelete);
         buttonPanel.add(btnEdit);
-        buttonPanel.add(btnView);
         buttonPanel.add(btnExportExcel);
 
         // Phần tìm kiếm: Căn giữa
@@ -120,6 +124,39 @@ public class ProductGUI extends JPanel {
         // Load data from database
         loadDataFromDatabase();
 
+        // Thêm sự kiện cho các nút
+        btnAdd.addActionListener(e -> productDialog.showDialogToAddProduct());
+
+        btnEdit.addActionListener(e -> {
+            int selectedRow = table.getSelectedRow();
+            if (selectedRow != -1) {
+                String maSP = (String) table.getValueAt(selectedRow, 0);
+                String maLSP = (String) table.getValueAt(selectedRow, 1);
+                String tenSP = (String) table.getValueAt(selectedRow, 2);
+                Float donGia = Float.parseFloat(table.getValueAt(selectedRow, 3).toString().replace(",", ""));
+                int soLuong = (Integer) table.getValueAt(selectedRow, 4);
+                String fileAnh = getFileNameFromImageIcon((ImageIcon) table.getValueAt(selectedRow, 5));
+                String trangThai = (String) table.getValueAt(selectedRow, 6);
+                productDialog.showDialogToEditProduct(maSP, maLSP, tenSP, donGia, fileAnh, soLuong, trangThai);
+            } else {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm để sửa!", "Thông báo",
+                        JOptionPane.WARNING_MESSAGE);
+            }
+        });
+
+        btnDelete.addActionListener(e -> {
+            int selectedRow = table.getSelectedRow();
+            if (selectedRow != -1) {
+                String maSP = (String) table.getValueAt(selectedRow, 0);
+                productDialog.showDialogToDeleteProduct(maSP);
+            } else {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm để xóa!", "Thông báo",
+                        JOptionPane.WARNING_MESSAGE);
+            }
+        });
+
+        btnReset.addActionListener(e -> loadDataFromDatabase());
+
         // Thêm các thành phần vào panel chính
         JScrollPane scrollPane = new JScrollPane(table);
 
@@ -133,7 +170,8 @@ public class ProductGUI extends JPanel {
     }
 
     private void loadDataFromDatabase() {
-        List<ProductDTO> products = getProductsFromDatabase();
+        model.setRowCount(0); // Xóa dữ liệu cũ
+        List<ProductDTO> products = productBus.getList(); // Sử dụng ProductBUS để lấy dữ liệu
         for (ProductDTO product : products) {
             addProductToTable(product);
         }
@@ -167,7 +205,6 @@ public class ProductGUI extends JPanel {
 
     private void addProductToTable(ProductDTO product) {
         ImageIcon imageIcon = null;
-        // Đường dẫn tương đối đến thư mục imageTopic
         String imagePath = "/org/example/GUI/resources/imageTopic/" + product.getHinhAnh();
         java.net.URL imgURL = getClass().getResource(imagePath);
         if (imgURL != null) {
@@ -186,7 +223,7 @@ public class ProductGUI extends JPanel {
                 product.getDonGia(),
                 product.getSoLuong(),
                 imageIcon,
-                product.getTrangthai() == 1 ? "Đang bán" : "Ngừng bán"
+                product.getTrangthai() == 1 ? "Đang bán" : "Ngừng bán" // Đồng bộ với ProductDTO
         });
     }
 
@@ -215,7 +252,6 @@ public class ProductGUI extends JPanel {
             }
         };
 
-        // Áp dụng renderer cho cột "Đơn giá" (cột thứ 3, vì index bắt đầu từ 0)
         TableColumn priceColumn = table.getColumnModel().getColumn(3);
         priceColumn.setCellRenderer(renderer);
     }
@@ -234,5 +270,14 @@ public class ProductGUI extends JPanel {
             }
             return this;
         }
+    }
+
+    // Phương thức hỗ trợ lấy tên file từ ImageIcon
+    private String getFileNameFromImageIcon(ImageIcon icon) {
+        if (icon != null && icon.getDescription() != null) {
+            String path = icon.getDescription();
+            return new File(path).getName();
+        }
+        return "";
     }
 }

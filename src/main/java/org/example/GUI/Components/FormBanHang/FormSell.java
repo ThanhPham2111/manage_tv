@@ -338,7 +338,8 @@ public class FormSell extends JPanel {
     private void loadProductsToTable() {
         Connection conn = UtilsJDBC.getConnectDB();
         List<ProductDTO> products = new ArrayList<>();
-        String query = "SELECT MaSP, MaLSP, TenSP, DonGia, SoLuong, HinhAnh, TrangThai FROM products";
+        String query = "SELECT MaSP, MaLSP, TenSP, DonGia, SoLuong, HinhAnh, TrangThai FROM product"; // Sửa thành
+                                                                                                      // product
         try (PreparedStatement pstmt = conn.prepareStatement(query);
                 ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
