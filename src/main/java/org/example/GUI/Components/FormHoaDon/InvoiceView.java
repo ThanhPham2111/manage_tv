@@ -14,6 +14,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 
 import org.example.BUS.InvoiceBUS;
 import org.example.DTO.InvoiceDTO;
@@ -61,11 +62,11 @@ public class InvoiceView extends JPanel{
         customDateContainer,
         buttonContainer;
     
-    private Font titledFont;
+    private Font titleFont;
     public InvoiceView(){
         invoiceBUS = new InvoiceBUS();
         setLayout(new BorderLayout());
-        titledFont = new Font("Arial", Font.BOLD, 18);
+        titleFont = new Font("Segoe UI", Font.BOLD, 16);
         initComponents();
     }
 
@@ -120,7 +121,7 @@ public class InvoiceView extends JPanel{
         }
 
         invoiceTable = new JTable(invoiceTableModel);
-
+        invoiceTable.setRowHeight(25);
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 
@@ -140,6 +141,9 @@ public class InvoiceView extends JPanel{
             }
         });
 
+        JTableHeader header = invoiceTable.getTableHeader();
+
+        header.setFont(titleFont);
         sp = new JScrollPane(invoiceTable);
     }
 
@@ -152,7 +156,7 @@ public class InvoiceView extends JPanel{
         totalLabel = new JLabel("________");
 
         TitledBorder border = BorderFactory.createTitledBorder("Thông tin hoá đơn");
-        border.setTitleFont(titledFont);
+        border.setTitleFont(titleFont);
         infoPanel.setBorder(border);
 
         infoPanel.setPreferredSize(new Dimension(355, 0));
@@ -176,7 +180,7 @@ public class InvoiceView extends JPanel{
         filterPanel = new JPanel(new GridLayout(6, 1, 0, 5));
 
         TitledBorder border = BorderFactory.createTitledBorder("Bộ lọc");
-        border.setTitleFont(titledFont);
+        border.setTitleFont(titleFont);
         filterPanel.setBorder(border);
 
         invoiceIDTF = new JTextField(11);
