@@ -46,6 +46,7 @@ public class InvoiceView extends JPanel{
     private JButton exportExcel;
     private JPanel infoPanel;
     private JLabel invoiceIDLabel, customerLabel, employeeLabel, dateLabel, totalLabel;
+    private JButton invoiceDetailBtn;
 
     private JPanel filterPanel;
     private JTextField invoiceIDTF, customerSearchTF, employeeSearchTF;
@@ -97,7 +98,12 @@ public class InvoiceView extends JPanel{
     
     private void initTable(){
         String[] columnsNames = {"Mã hoá đơn", "Mã khách hàng", "Mã nhân viên", "Ngày lập", "Giờ lập", "Tổng tiền"};
-        invoiceTableModel = new DefaultTableModel(columnsNames, 0);
+        invoiceTableModel = new DefaultTableModel(columnsNames, 0){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
 
         ArrayList<InvoiceDTO> invoices = invoiceBUS.getAllInvoices();
         invoiceTableModel.setRowCount(0);
@@ -130,19 +136,7 @@ public class InvoiceView extends JPanel{
             @Override
             public void mouseClicked(MouseEvent e){
                 int selectedRowIndex = invoiceTable.getSelectedRow();
-                if(selectedRowIndex >= 0){
-                    String maHoaDon = invoiceTableModel.getValueAt(selectedRowIndex, 0).toString();
-                    InvoiceDTO invoice = invoiceBUS.getInvoice(maHoaDon);
-                    
-                    infoPanel.setIgnoreRepaint(true);
-                    invoiceIDLabel.setText(invoice.getMaHoaDon());
-                    customerLabel.setText(invoice.getMaKhachHang());
-                    employeeLabel.setText(invoice.getMaNhanVien());
-                    dateLabel.setText(new SimpleDateFormat("dd/MM/yyyy").format(invoice.getNgayLap()));
-                    totalLabel.setText(priceFormatter.format(invoice.getTongTien()) + " VNĐ");
-                    infoPanel.setIgnoreRepaint(false);
-                    infoPanel.repaint();
-                }
+                updateInfoPanel(selectedRowIndex);
             }
         });
 
@@ -161,15 +155,21 @@ public class InvoiceView extends JPanel{
         border.setTitleFont(titledFont);
         infoPanel.setBorder(border);
 
-        infoPanel.setPreferredSize(new Dimension(255, 0));
-        infoPanel.add(createRow_LBLB("Mã hoá đơn: ", 95, invoiceIDLabel));
-        infoPanel.add(createRow_LBLB("Mã khách hàng: ", 95, customerLabel));
-        infoPanel.add(createRow_LBLB("Mã nhân viên: ", 95, employeeLabel));
-        infoPanel.add(createRow_LBLB("Ngày lập: ", 95, dateLabel));
-        infoPanel.add(createRow_LBLB("Tổng tiền: ", 95, totalLabel));
-        JPanel a = new JPanel(new FlowLayout(FlowLayout.TRAILING));
-        a.add(new JButton("Xem chi tiết"));
-        infoPanel.add(a);
+        infoPanel.setPreferredSize(new Dimension(355, 0));
+        infoPanel.add(createRow_LBCPN("Mã hoá đơn: ", 95, invoiceIDLabel));
+        infoPanel.add(createRow_LBCPN("Mã khách hàng: ", 95, customerLabel));
+        infoPanel.add(createRow_LBCPN("Mã nhân viên: ", 95, employeeLabel));
+        infoPanel.add(createRow_LBCPN("Ngày lập: ", 95, dateLabel));
+        infoPanel.add(createRow_LBCPN("Tổng tiền: ", 95, totalLabel));
+
+        invoiceDetailBtn = new JButton("Xem chi tiết");
+        JPanel tmp = new JPanel(new FlowLayout(FlowLayout.TRAILING));
+
+        invoiceDetailBtn.addActionListener((e) -> {
+            
+        });
+        tmp.add(invoiceDetailBtn);
+        infoPanel.add(tmp);
     }
 
     private void initFilterPanel(){
@@ -253,17 +253,6 @@ public class InvoiceView extends JPanel{
 
     }
 
-    public JPanel createRow_LBLB(String labelText, int labelWidth, JLabel outLabel){
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEADING));
-        JLabel lb = new JLabel(labelText);
-        lb.setPreferredSize(new Dimension(labelWidth, lb.getPreferredSize().height));
-
-        panel.add(lb);
-        panel.add(outLabel);
-
-        return panel;
-    }
-
     public JPanel createRow_LBCPN(String labelText, int labelWidth, JComponent component){
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEADING));
         JLabel lb = new JLabel(labelText);
@@ -274,8 +263,20 @@ public class InvoiceView extends JPanel{
         return panel;
     }
 
-    public void updateInfoPanel(){
-        
+    public void updateInfoPanel(int selectedRowIndex){
+        if(selectedRowIndex >= 0){
+            String maHoaDon = invoiceTableModel.getValueAt(selectedRowIndex, 0).toString();
+            InvoiceDTO invoice = invoiceBUS.getInvoice(maHoaDon);
+            
+            infoPanel.setIgnoreRepaint(true);
+            invoiceIDLabel.setText(invoice.getMaHoaDon());
+            customerLabel.setText(invoice.getMaKhachHang());
+            employeeLabel.setText(invoice.getMaNhanVien());
+            dateLabel.setText(new SimpleDateFormat("dd/MM/yyyy").format(invoice.getNgayLap()));
+            totalLabel.setText(priceFormatter.format(invoice.getTongTien()) + " VNĐ");
+            infoPanel.setIgnoreRepaint(false);
+            infoPanel.repaint();
+        }
     }
 
     public void resetFilter(){
