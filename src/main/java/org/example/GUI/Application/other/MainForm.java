@@ -88,6 +88,7 @@ public class MainForm extends JLayeredPane {
             } else if (index == 5) {
                 // Application.showForm(new TestForm(panelBody));
             } else if (index == 6) {
+                Application.showForm(new EmployeeGUI());
 
             } else if (index == 7) {
                 Application.showForm(new CustomerGUI());
