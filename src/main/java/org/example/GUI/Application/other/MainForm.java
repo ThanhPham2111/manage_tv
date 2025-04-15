@@ -17,6 +17,7 @@ import javax.swing.border.EmptyBorder;
 import org.example.GUI.Application.Application;
 import org.example.GUI.Components.FormAuth.LoginForm;
 import org.example.GUI.Components.FormBanHang.FormSell;
+import org.example.GUI.Components.FormHoaDon.InvoiceView;
 import org.example.GUI.Components.FormProducts.ProductGUI;
 import org.example.GUI.FormCustomer.CustomerGUI;
 import org.example.GUI.FormSupplier.SupplierGUI;
@@ -81,7 +82,10 @@ public class MainForm extends JLayeredPane {
                 Application.showForm(new ProductGUI());
             } else if (index == 3) {
 
-            } else if (index == 5) {
+            } else if (index == 4) {
+                Application.showForm(new InvoiceView());
+            }
+            else if (index == 5) {
                 // Application.showForm(new TestForm(panelBody));
             } else if (index == 6) {
 
