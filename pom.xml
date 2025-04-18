@@ -29,41 +29,41 @@
 </dependency>
 
 
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.33</version>
-        </dependency>
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <version>8.0.33</version>
+</dependency>
 
-        <dependency>
-            <groupId>com.formdev</groupId>
-            <artifactId>flatlaf</artifactId>
-            <version>3.4.1</version>
-        </dependency>
+<dependency>
+    <groupId>com.formdev</groupId>
+    <artifactId>flatlaf</artifactId>
+    <version>3.4.1</version>
+</dependency>
 
-        <dependency>
-            <groupId>com.formdev</groupId>
-            <artifactId>flatlaf-extras</artifactId>
-            <version>3.4.1</version>
-        </dependency>
+<dependency>
+    <groupId>com.formdev</groupId>
+    <artifactId>flatlaf-extras</artifactId>
+    <version>3.4.1</version>
+</dependency>
 
-        <dependency>
-            <groupId>com.formdev</groupId>
-            <artifactId>flatlaf-fonts-roboto</artifactId>
-            <version>2.137</version>
-        </dependency>
+<dependency>
+    <groupId>com.formdev</groupId>
+    <artifactId>flatlaf-fonts-roboto</artifactId>
+    <version>2.137</version>
+</dependency>
 
-        <dependency>
-            <groupId>com.miglayout</groupId>
-            <artifactId>miglayout-core</artifactId>
-            <version>5.3</version>
-        </dependency>
+<dependency>
+    <groupId>com.miglayout</groupId>
+    <artifactId>miglayout-core</artifactId>
+    <version>5.3</version>
+</dependency>
 
-        <dependency>
-            <groupId>com.miglayout</groupId>
-            <artifactId>miglayout-swing</artifactId>
-            <version>5.3</version>
-        </dependency>
+<dependency>
+    <groupId>com.miglayout</groupId>
+    <artifactId>miglayout-swing</artifactId>
+    <version>5.3</version>
+</dependency>
         <!-- maven chart -->
 <dependency>
     <groupId>org.jfree</groupId>
@@ -101,6 +101,24 @@
         </dependency>
     </dependencies>
 
+    <!-- Apache cho nhập/xuất file xlxs-->
+    <dependency>
+        <groupId>org.apache.poi</groupId>
+        <artifactId>poi-ooxml</artifactId>
+        <version>5.2.3</version> <!-- Dùng phiên bản mới nhất -->
+    </dependency>
+    <dependency>
+        <groupId>org.apache.poi</groupId>
+        <artifactId>poi-ooxml-schemas</artifactId>
+        <version>4.1.2</version> <!-- Cần thêm dependency này -->
+    </dependency>
+    <dependency>
+        <groupId>org.apache.xmlbeans</groupId>
+        <artifactId>xmlbeans</artifactId>
+        <version>5.1.1</version> <!-- Cần thêm dependency này -->
+    </dependency>
+
+    <!---->
 
     <build>
         <plugins>
