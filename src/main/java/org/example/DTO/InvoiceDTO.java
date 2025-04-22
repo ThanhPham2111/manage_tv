@@ -7,6 +7,8 @@ public class InvoiceDTO {
     private String maHoaDon;
     private String maKhachHang;
     private String maNhanVien;
+    private String tenKhachHang;
+    private String tenNhanVien;
     private Date ngayLap;
     private Time gioNhap;
     private double tongTien;
@@ -17,13 +19,16 @@ public class InvoiceDTO {
         maNhanVien = "";
         ngayLap = null;
         tongTien = 0;
+        tenKhachHang = "";
+        tenNhanVien = "";
     }
 
-    public InvoiceDTO(String maHoaDon, String maKhachHang, String maNhanVien, Date ngayLap, double tongTien) {
+    public InvoiceDTO(String maHoaDon, String maKhachHang, String maNhanVien, Date ngayLap, Time gioNhap, double tongTien) {
         this.maHoaDon = maHoaDon;
         this.maKhachHang = maKhachHang;
         this.maNhanVien = maNhanVien;
         this.ngayLap = ngayLap;
+        this.gioNhap = gioNhap;
         this.tongTien = tongTien;
     }
 
@@ -73,5 +78,21 @@ public class InvoiceDTO {
 
     public void setTongTien(double tongTien) {
         this.tongTien = tongTien;
+    }
+
+    public String getTenKhachHang(){
+        return tenKhachHang;
+    }
+
+    public void setTenKhachHang(String tenKhachHang){
+        this.tenKhachHang = tenKhachHang;
+    }
+
+    public String getTenNhanVien(){
+        return tenNhanVien;
+    }
+
+    public void setTenNhanVien(String tenNhanVien){
+        this.tenNhanVien = tenNhanVien;
     }
 }
