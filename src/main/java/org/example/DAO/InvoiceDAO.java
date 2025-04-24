@@ -140,13 +140,13 @@ public class InvoiceDAO {
         String query = "SELECT * FROM invoice WHERE 1 ";
         
         if(maHoaDon != null && !maHoaDon.isEmpty()){
-            query += "AND MaHD = ?";
+            query += "AND MaHD LIKE ? ";
         }
         if(maKhachHang != null && !maKhachHang.isEmpty()){
-            query += "AND MaKH = ?";
+            query += "AND MaKH LIKE ? ";
         }
         if(maNhanVien != null && !maNhanVien.isEmpty()){
-            query += "AND MaNV = ?";
+            query += "AND MaNV LIKE ? ";
         }
         if(beginDate != null && endDate != null){
             query += "AND NgayLap BETWEEN ? AND ?";
@@ -156,13 +156,13 @@ public class InvoiceDAO {
             PreparedStatement ps = conn.prepareStatement(query);
             int index = 1;
             if(maHoaDon != null && !maHoaDon.isEmpty()){
-                ps.setString(index++, maHoaDon);
+                ps.setString(index++, maHoaDon + "%");
             }
             if(maKhachHang != null && !maKhachHang.isEmpty()){
-                ps.setString(index++, maKhachHang);
+                ps.setString(index++, maKhachHang + "%");
             }
             if(maNhanVien != null && !maNhanVien.isEmpty()){
-                ps.setString(index++, maNhanVien);
+                ps.setString(index++, maNhanVien + "%");
             }
             if(beginDate != null && endDate != null){
                 ps.setString(index++, new SimpleDateFormat("yyyy-MM-dd").format(beginDate));
