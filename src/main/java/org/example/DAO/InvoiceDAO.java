@@ -10,8 +10,67 @@ import java.util.Date;
 
 import org.example.ConnectDB.UtilsJDBC;
 import org.example.DTO.InvoiceDTO;
+import org.example.DTO.InvoiceItemDTO;
 
 public class InvoiceDAO {
+    public Boolean insertInvoice(InvoiceDTO invoice){
+        Connection conn = UtilsJDBC.getConnectDB();
+        String insertInvoiceQuery = "INSERT INTO invoice(MaHD, MaNV, MaKH, NgayLap, GioNhap, TongTien) VALUES (?, ?, ?, ?, ?, ?)";
+        String insertInvoiceItemQuery = "INSERT INTO invoice_details(MaHD, MaSP, SoLuong, DonGia) VALUES (?, ?, ?, ?)";
+        try {
+            PreparedStatement psInsertInvoice = conn.prepareStatement(insertInvoiceQuery);
+            PreparedStatement psInsertInvoiceItem = conn.prepareStatement(insertInvoiceItemQuery);
+            psInsertInvoice.setString(1, invoice.getMaHoaDon());
+            psInsertInvoice.setString(2, invoice.getMaNhanVien());
+            psInsertInvoice.setString(3, invoice.getMaKhachHang());
+            psInsertInvoice.setDate(4, invoice.getNgayLap());
+            psInsertInvoice.setTime(5, invoice.getGioNhap());
+            psInsertInvoice.setDouble(6, invoice.getTongTien());
+            conn.setAutoCommit(false);
+            
+            int rowsCnt1 = psInsertInvoice.executeUpdate();
+            if(rowsCnt1 <= 0){
+                conn.rollback();
+                System.out.println("❌ Thêm thông tin hoá đơn không thành công!");
+                return false;
+            }
+
+            ArrayList<InvoiceItemDTO> items = invoice.getInvoiceItems();
+            for(InvoiceItemDTO item : items){
+                psInsertInvoiceItem.setString(1, invoice.getMaHoaDon());
+                psInsertInvoiceItem.setString(2, item.getMaSanPham());
+                psInsertInvoiceItem.setLong(3, item.getSoLuong());
+                psInsertInvoiceItem.setDouble(4, item.getDonGia());
+                psInsertInvoiceItem.addBatch();
+            }
+
+            int rowsCnt2[] = psInsertInvoiceItem.executeBatch();
+            for(int cnt : rowsCnt2){
+                if(cnt <= 0){
+                    conn.rollback();
+                    System.out.println("❌ Thêm chi tiết hoá đơn không thành công!");
+                    return false;
+                }
+            }
+
+            conn.commit();
+            System.out.println("✅ Thêm hoá đơn thành công!");
+            return true;
+        } catch (SQLException e) {
+            try {
+                conn.rollback();
+            } catch (SQLException ex) {
+                System.out.println("❌ Rollback không thành công!");
+                ex.printStackTrace();
+                return false;
+            }
+            System.out.println("❌ Thêm hoá đơn không thành công");
+            e.printStackTrace();
+            return false;
+        } finally {
+            UtilsJDBC.closeConnection();
+        }
+    }
 
     public ArrayList<InvoiceDTO> getAllInvoices() {
         Connection conn = UtilsJDBC.getConnectDB();
@@ -43,7 +102,7 @@ public class InvoiceDAO {
         return invoices;
     }
 
-    public InvoiceDTO getInvoice(String maHoaDon) {
+    public InvoiceDTO getInvoiceByID(String maHoaDon) {
         Connection conn = UtilsJDBC.getConnectDB();
         InvoiceDTO invoice = new InvoiceDTO();
         String query = "SELECT * FROM invoice WHERE MaHD = ?";
@@ -59,8 +118,8 @@ public class InvoiceDAO {
                 invoice.setNgayLap(rs.getDate("NgayLap"));
                 invoice.setGioNhap(rs.getTime("GioNhap"));
                 invoice.setTongTien(rs.getDouble("TongTien"));
-                invoice.setTenKhachHang(getCustomerName(invoice.getMaKhachHang()));
-                invoice.setTenNhanVien(getemployeeName(invoice.getMaNhanVien()));
+                invoice.setTenKhachHang(getCustomerNameByID(invoice.getMaKhachHang()));
+                invoice.setTenNhanVien(getemployeeNameByID(invoice.getMaNhanVien()));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -133,7 +192,26 @@ public class InvoiceDAO {
         return invoices;
     }
 
-    public String getCustomerName(String maKhachHang){
+    public String getMaxInvoiceID(){
+        Connection conn = UtilsJDBC.getConnectDB();
+        String query = "SELECT MAX(MaHD) AS MaxID FROM invoice";
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
+            String maxInvoiceID = "";
+            if(rs.next()){
+                maxInvoiceID = rs.getString("MaxID");
+            }
+
+            return maxInvoiceID;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public String getCustomerNameByID(String maKhachHang){
         Connection conn = UtilsJDBC.getConnectDB();
         String query = "SELECT TenKH FROM customer WHERE MaKH = ?";
         String customerName = "";
@@ -156,7 +234,7 @@ public class InvoiceDAO {
         return customerName;
     }
 
-    public String getemployeeName(String maNhanVien){
+    public String getemployeeNameByID(String maNhanVien){
         Connection conn = UtilsJDBC.getConnectDB();
         String query = "SELECT TenNV FROM employee WHERE MaNV = ?";
         String employeeName = "";

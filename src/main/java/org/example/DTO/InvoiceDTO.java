@@ -2,8 +2,12 @@ package org.example.DTO;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.text.ParseException;
+import java.util.ArrayList;
 
-public class InvoiceDTO {
+import org.example.DateFormat.UtilsDateFormat;
+
+public class InvoiceDTO {    
     private String maHoaDon;
     private String maKhachHang;
     private String maNhanVien;
@@ -12,15 +16,18 @@ public class InvoiceDTO {
     private Date ngayLap;
     private Time gioNhap;
     private double tongTien;
+    private ArrayList<InvoiceItemDTO> items;
 
     public InvoiceDTO() {
         maHoaDon = "";
         maKhachHang = "";
         maNhanVien = "";
         ngayLap = null;
+        gioNhap = null;
         tongTien = 0;
         tenKhachHang = "";
         tenNhanVien = "";
+        items = new ArrayList<>();
     }
 
     public InvoiceDTO(String maHoaDon, String maKhachHang, String maNhanVien, Date ngayLap, Time gioNhap, double tongTien) {
@@ -32,6 +39,13 @@ public class InvoiceDTO {
         this.tongTien = tongTien;
     }
 
+    public void addProduct(String maSanPham, long soLuong, double donGia){
+        items.add(new InvoiceItemDTO(maSanPham, soLuong, donGia));
+    }
+
+    public ArrayList<InvoiceItemDTO> getInvoiceItems(){
+        return items;
+    }
     public String getMaHoaDon() {
         return maHoaDon;
     }
@@ -72,6 +86,23 @@ public class InvoiceDTO {
         this.gioNhap = gioNhap;
     }
 
+    public java.util.Date getThoiGianLap(){
+        try {
+            String dateFormat = UtilsDateFormat.formatDate(ngayLap);
+            String timeFormat = UtilsDateFormat.formatTime(gioNhap);
+            java.util.Date date = UtilsDateFormat.stringToDate(dateFormat + " " + timeFormat);
+            return date;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public void setThoiGianLap(java.util.Date date){
+        this.ngayLap = new java.sql.Date(date.getTime());
+        this.gioNhap = new java.sql.Time(date.getTime());
+    }
+
     public double getTongTien() {
         return tongTien;
     }
@@ -80,6 +111,15 @@ public class InvoiceDTO {
         this.tongTien = tongTien;
     }
 
+    public void calTongTien(){
+        double sum = 0.0;
+        for(InvoiceItemDTO item : items){
+            sum += item.getSoLuong() * item.getDonGia();
+        }
+
+        this.tongTien = sum;
+    }
+    
     public String getTenKhachHang(){
         return tenKhachHang;
     }

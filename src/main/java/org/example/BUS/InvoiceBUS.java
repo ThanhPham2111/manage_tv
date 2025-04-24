@@ -14,12 +14,24 @@ public class InvoiceBUS {
         invoiceDAO = new InvoiceDAO();
     }
 
+    public String getNextInvoiceID(){
+        final String prefix = "HD";
+        String maxInvoiceID = invoiceDAO.getMaxInvoiceID();
+        String numPart = maxInvoiceID.substring(prefix.length());
+        int nextNum = Integer.parseInt(numPart) + 1;
+
+        return String.format("%s%03d", prefix, nextNum);
+    }
+    public Boolean add(InvoiceDTO invoice){
+        return invoiceDAO.insertInvoice(invoice);
+    }
+
     public ArrayList<InvoiceDTO> getAllInvoices() {
         return invoiceDAO.getAllInvoices();
     }
 
-    public InvoiceDTO getInvoice(String maHoaDon) {
-        return invoiceDAO.getInvoice(maHoaDon);
+    public InvoiceDTO getInvoiceByID(String maHoaDon) {
+        return invoiceDAO.getInvoiceByID(maHoaDon);
     }
 
     public ArrayList<InvoiceDTO> getFilteredInvoices(String maHoaDon,

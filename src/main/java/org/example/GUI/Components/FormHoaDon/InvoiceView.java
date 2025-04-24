@@ -21,6 +21,7 @@ import javax.swing.table.JTableHeader;
 
 import org.example.BUS.InvoiceBUS;
 import org.example.DTO.InvoiceDTO;
+import org.example.DateFormat.UtilsDateFormat;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -57,7 +58,7 @@ public class InvoiceView extends JPanel {
     private JButton exportExcelBtn;
 
     private JPanel infoPanel;
-    private JLabel invoiceIDLabel, customerLabel, employeeLabel, dateLabel, totalLabel;
+    private JLabel lblInvoiceID, lblCustomer, lblEmployee, lblDateTime, lblTotal;
     private JButton invoiceDetailBtn;
 
     private JPanel filterPanel;
@@ -139,22 +140,22 @@ public class InvoiceView extends JPanel {
             BorderFactory.createEmptyBorder(PADDING, PADDING, PADDING, PADDING))
         );
 
-        invoiceIDLabel = new JLabel();
-        customerLabel = new JLabel();
-        employeeLabel = new JLabel();
-        dateLabel = new JLabel();
-        totalLabel = new JLabel();
+        lblInvoiceID = new JLabel();
+        lblCustomer = new JLabel();
+        lblEmployee = new JLabel();
+        lblDateTime = new JLabel();
+        lblTotal = new JLabel();
 
         invoiceDetailBtn = new JButton("Xem chi tiết");
         invoiceDetailBtn.setPreferredSize(new Dimension(BUTTON_WIDTH, invoiceDetailBtn.getPreferredSize().height));
         JPanel tmp = new JPanel(new FlowLayout(FlowLayout.TRAILING));
         tmp.add(invoiceDetailBtn);
 
-        infoPanel.add(createRow("Mã hoá đơn: ", LABEL_PREFERRED_WIDTH, invoiceIDLabel));
-        infoPanel.add(createRow("Khách hàng: ", LABEL_PREFERRED_WIDTH, customerLabel));
-        infoPanel.add(createRow("Nhân viên: ", LABEL_PREFERRED_WIDTH, employeeLabel));
-        infoPanel.add(createRow("Thời gian lập: ", LABEL_PREFERRED_WIDTH, dateLabel));
-        infoPanel.add(createRow("Tổng tiền: ", LABEL_PREFERRED_WIDTH, totalLabel));
+        infoPanel.add(createRow("Mã hoá đơn: ", LABEL_PREFERRED_WIDTH, lblInvoiceID));
+        infoPanel.add(createRow("Khách hàng: ", LABEL_PREFERRED_WIDTH, lblCustomer));
+        infoPanel.add(createRow("Nhân viên: ", LABEL_PREFERRED_WIDTH, lblEmployee));
+        infoPanel.add(createRow("Thời gian lập: ", LABEL_PREFERRED_WIDTH, lblDateTime));
+        infoPanel.add(createRow("Tổng tiền: ", LABEL_PREFERRED_WIDTH, lblTotal));
         infoPanel.add(tmp);
     }
 
@@ -209,16 +210,15 @@ public class InvoiceView extends JPanel {
     public void updateInfoPanel(int selectedRowIndex) {
         if (selectedRowIndex >= 0) {
             String maHoaDon = invoiceTableModel.getValueAt(selectedRowIndex, 0).toString();
-            InvoiceDTO invoice = invoiceBUS.getInvoice(maHoaDon);
+            InvoiceDTO invoice = invoiceBUS.getInvoiceByID(maHoaDon);
 
             infoPanel.setIgnoreRepaint(true);
 
-            invoiceIDLabel.setText(invoice.getMaHoaDon());
-            customerLabel.setText(invoice.getMaKhachHang() + " - " + invoice.getTenKhachHang());
-            employeeLabel.setText(invoice.getMaNhanVien() + " - " + invoice.getTenNhanVien());
-            dateLabel.setText(new SimpleDateFormat("dd/MM/yyyy").format(invoice.getNgayLap()) + " - "
-                            + new SimpleDateFormat("HH:mm:ss").format(invoice.getGioNhap()));
-            totalLabel.setText(priceFormatter.format(invoice.getTongTien()) + " VNĐ");
+            lblInvoiceID.setText(invoice.getMaHoaDon());
+            lblCustomer.setText(invoice.getMaKhachHang() + " - " + invoice.getTenKhachHang());
+            lblEmployee.setText(invoice.getMaNhanVien() + " - " + invoice.getTenNhanVien());
+            lblDateTime.setText(UtilsDateFormat.formatDateTime(invoice.getThoiGianLap()));
+            lblTotal.setText(priceFormatter.format(invoice.getTongTien()) + " VNĐ");
             
             infoPanel.setIgnoreRepaint(false);
             infoPanel.repaint();
@@ -228,11 +228,11 @@ public class InvoiceView extends JPanel {
     public void clearInfoPanel(){
         infoPanel.setIgnoreRepaint(true);
         
-        invoiceIDLabel.setText("________");
-        customerLabel.setText("________");
-        employeeLabel.setText("________");
-        dateLabel.setText("________");
-        totalLabel.setText("________");
+        lblInvoiceID.setText("________");
+        lblCustomer.setText("________");
+        lblEmployee.setText("________");
+        lblDateTime.setText("________");
+        lblTotal.setText("________");
 
         infoPanel.setIgnoreRepaint(false);
         infoPanel.repaint();
