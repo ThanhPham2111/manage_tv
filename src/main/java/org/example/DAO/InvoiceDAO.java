@@ -10,7 +10,7 @@ import java.util.Date;
 
 import org.example.ConnectDB.UtilsJDBC;
 import org.example.DTO.InvoiceDTO;
-import org.example.DTO.InvoiceItemDTO;
+import org.example.DTO.InvoiceDetailDTO;
 
 public class InvoiceDAO {
     public Boolean insertInvoice(InvoiceDTO invoice){
@@ -35,12 +35,12 @@ public class InvoiceDAO {
                 return false;
             }
 
-            ArrayList<InvoiceItemDTO> items = invoice.getInvoiceItems();
-            for(InvoiceItemDTO item : items){
-                psInsertInvoiceItem.setString(1, invoice.getMaHoaDon());
-                psInsertInvoiceItem.setString(2, item.getMaSanPham());
-                psInsertInvoiceItem.setLong(3, item.getSoLuong());
-                psInsertInvoiceItem.setDouble(4, item.getDonGia());
+            ArrayList<InvoiceDetailDTO> invoiceDetails = invoice.getInvoiceDetails();
+            for(InvoiceDetailDTO invoiceDetail : invoiceDetails){
+                psInsertInvoiceItem.setString(1, invoiceDetail.getMaHoaDon());
+                psInsertInvoiceItem.setString(2, invoiceDetail.getMaSanPham());
+                psInsertInvoiceItem.setLong(3, invoiceDetail.getSoLuong());
+                psInsertInvoiceItem.setDouble(4, invoiceDetail.getDonGia());
                 psInsertInvoiceItem.addBatch();
             }
 
@@ -130,6 +130,38 @@ public class InvoiceDAO {
         return invoice;
     }
     
+    public InvoiceDTO getInvoiceDetailsByID(String maHoaDon){
+        InvoiceDTO invoice = getInvoiceByID(maHoaDon);
+        Connection conn = UtilsJDBC.getConnectDB();
+        String query = "";
+        query += "SELECT CTHD.MaSP, TenSP, CTHD.SoLuong, CTHD.DonGia, (CTHD.SoLuong * CTHD.DonGia) AS ThanhTien ";
+        query += "FROM invoice_details AS CTHD ";
+        query += "INNER JOIN product AS SP ";
+        query += "ON CTHD.MaSP = SP.MaSP ";
+        query += "WHERE CTHD.MAHD = ? ";
+        query += "ORDER BY CTHD.MaSP ASC";
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setString(1, maHoaDon);
+            ResultSet rs = ps.executeQuery();
+
+            while(rs.next()){
+                invoice.addInvoiceDetail(new InvoiceDetailDTO(
+                    rs.getString("MaSP"),
+                    rs.getString("TenSP"),
+                    rs.getLong("SoLuong"),
+                    rs.getDouble("DonGia"),
+                    rs.getDouble("ThanhTien")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return invoice;
+    }
+
     public ArrayList<InvoiceDTO> getFilteredInvoices(String maHoaDon,
                                                      String maKhachHang,
                                                      String maNhanVien,
