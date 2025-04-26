@@ -16,7 +16,7 @@ public class InvoiceDTO {
     private Date ngayLap;
     private Time gioNhap;
     private double tongTien;
-    private ArrayList<InvoiceItemDTO> items;
+    private ArrayList<InvoiceDetailDTO> invoiceDetails;
 
     public InvoiceDTO() {
         maHoaDon = "";
@@ -27,7 +27,7 @@ public class InvoiceDTO {
         tongTien = 0;
         tenKhachHang = "";
         tenNhanVien = "";
-        items = new ArrayList<>();
+        invoiceDetails = new ArrayList<>();
     }
 
     public InvoiceDTO(String maHoaDon, String maKhachHang, String maNhanVien, Date ngayLap, Time gioNhap, double tongTien) {
@@ -39,12 +39,16 @@ public class InvoiceDTO {
         this.tongTien = tongTien;
     }
 
-    public void addProduct(String maSanPham, long soLuong, double donGia){
-        items.add(new InvoiceItemDTO(maSanPham, soLuong, donGia));
+    public void addInvoiceDetail(InvoiceDetailDTO invoiceDetail){
+        invoiceDetails.add(invoiceDetail);
+    }
+    
+    public void addInvoiceDetail(String maHoaDon, String maSanPham, long soLuong, double donGia){
+        invoiceDetails.add(new InvoiceDetailDTO(maHoaDon, maSanPham, soLuong, donGia));
     }
 
-    public ArrayList<InvoiceItemDTO> getInvoiceItems(){
-        return items;
+    public ArrayList<InvoiceDetailDTO> getInvoiceDetails(){
+        return invoiceDetails;
     }
     public String getMaHoaDon() {
         return maHoaDon;
@@ -113,8 +117,8 @@ public class InvoiceDTO {
 
     public void calTongTien(){
         double sum = 0.0;
-        for(InvoiceItemDTO item : items){
-            sum += item.getSoLuong() * item.getDonGia();
+        for(InvoiceDetailDTO invoiceDetail : invoiceDetails){
+            sum += invoiceDetail.getSoLuong() * invoiceDetail.getDonGia();
         }
 
         this.tongTien = sum;
