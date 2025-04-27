@@ -53,11 +53,11 @@ public class InvoiceDetailDialog extends JDialog{
     private JButton printInvoiceBtn;
 
     String maHoaDon;
-    public InvoiceDetailDialog(JFrame owner, String maHoaDon){
-        super(owner, "Chi tiết hoá đơn", true);
+    public InvoiceDetailDialog(String maHoaDon){
+        super((JFrame) null, "Chi tiết hoá đơn", true);
         setLayout(new BorderLayout(HGAP, VGAP));
         setSize(755, 455);
-        setLocationRelativeTo(owner);
+        setLocationRelativeTo(null);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
         this.maHoaDon = maHoaDon;

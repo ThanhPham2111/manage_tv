@@ -5,7 +5,6 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -17,7 +16,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.OverlayLayout;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
@@ -32,7 +30,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.Window;
 import java.io.File;
 import java.util.Date;
 import java.util.ArrayList;
@@ -371,12 +368,14 @@ public class InvoiceView extends JPanel {
     }
 
     public void showInvoiceDetails(String maHoaDon){
-        Window window = SwingUtilities.getWindowAncestor(this);
-        JFrame owner = (JFrame) window;
-        new InvoiceDetailDialog(owner, maHoaDon);
+        new InvoiceDetailDialog(maHoaDon);
     }
 
     public void exportExcel(){
+        InvoiceExportDialog exportDialog = new InvoiceExportDialog();
+        if(exportDialog.getConfirmStatus() == false) return;
+        String selectedOption = exportDialog.getSelectedOption();
+
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Chọn địa điểm lưu");
         int userSelection = fileChooser.showSaveDialog(null);
@@ -388,8 +387,28 @@ public class InvoiceView extends JPanel {
                 path += ".xlsx";
             }
             
-            boolean isOk = invoiceBUS.exportExcel(invoiceTableModel, path);
-            if(isOk){
+            DefaultTableModel toExportModel = new DefaultTableModel();
+            if(selectedOption == "AllInvoices"){
+                ArrayList<InvoiceDTO> invoices = invoiceBUS.getAllInvoices();
+                String[] columnsNames = { "Mã hoá đơn", "Mã khách hàng", "Mã nhân viên", "Ngày lập", "Giờ lập", "Tổng tiền" };
+                toExportModel = new DefaultTableModel(columnsNames, 0);
+                for(InvoiceDTO invoice : invoices){
+                    toExportModel.addRow(new Object[] {
+                        invoice.getMaHoaDon(),
+                        invoice.getMaKhachHang(),
+                        invoice.getMaNhanVien(),
+                        new SimpleDateFormat("dd/MM/yyyy").format(invoice.getNgayLap()),
+                        new SimpleDateFormat("HH:mm:ss").format(invoice.getGioNhap()),
+                        priceFormatter.format(invoice.getTongTien())
+                    });
+                }
+            } else
+            if(selectedOption == "CurrentInvoices"){
+                toExportModel = invoiceTableModel;
+            }
+
+            Boolean success = invoiceBUS.exportExcel(toExportModel, path);
+            if(success){
                 JOptionPane.showMessageDialog(null, "Xuất Excel thành công");
             } else{
                 JOptionPane.showMessageDialog(null, "Xuát Excel không thành công");
