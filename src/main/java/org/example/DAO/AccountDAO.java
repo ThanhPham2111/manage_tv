@@ -1,11 +1,18 @@
 package DAO;
 
-import DTO.AccountDTO;
+import org.example.DTO.AccountDTO;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class AccountDAO {
-    private List<AccountDTO> accountList;
+    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/tv";
+    private static final String JDBC_USERNAME = "root"; //Username
+    private static final String JDBC_PASSWORD = ""; // Thay lại pass
 
     public AccountDAO() {
         // Khởi tạo dữ liệu mẫu
