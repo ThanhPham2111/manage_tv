@@ -4,51 +4,51 @@ import java.sql.Date;
 import java.sql.Time;
 
 public class InvoiceDTO {
-    private String maHoaDon;
-    private String maKhachHang;
-    private String maNhanVien;
+    private String maHD;
+    private String maKH;
+    private String maNV;
     private Date ngayLap;
     private Time gioNhap;
     private double tongTien;
 
     public InvoiceDTO() {
-        maHoaDon = "";
-        maKhachHang = "";
-        maNhanVien = "";
+        maHD = "";
+        maKH = "";
+        maNV = "";
         ngayLap = null;
         tongTien = 0;
     }
 
-    public InvoiceDTO(String maHoaDon, String maKhachHang, String maNhanVien, Date ngayLap, double tongTien) {
-        this.maHoaDon = maHoaDon;
-        this.maKhachHang = maKhachHang;
-        this.maNhanVien = maNhanVien;
+    public InvoiceDTO(String maHD, String maKH, String maNV, Date ngayLap, double tongTien) {
+        this.maHD = maHD;
+        this.maKH = maKH;
+        this.maNV = maNV;
         this.ngayLap = ngayLap;
         this.tongTien = tongTien;
     }
 
-    public String getMaHoaDon() {
-        return maHoaDon;
+    public String getMaHD() {
+        return maHD;
     }
 
-    public void setMaHoaDon(String maHoaDon) {
-        this.maHoaDon = maHoaDon;
+    public void setMaHD(String maHD) {
+        this.maHD = maHD;
     }
 
-    public String getMaNhanVien() {
-        return maNhanVien;
+    public String getMaNV() {
+        return maNV;
     }
 
-    public void setMaNhanVien(String maNhanVien) {
-        this.maNhanVien = maNhanVien;
+    public void setMaNV(String maNV) {
+        this.maNV = maNV;
     }
 
-    public String getMaKhachHang() {
-        return maKhachHang;
+    public String getMaKH() {
+        return maKH;
     }
 
-    public void setmaKhachHang(String maKhachHang) {
-        this.maKhachHang = maKhachHang;
+    public void setMaKH(String maKH) {
+        this.maKH = maKH;
     }
 
     public Date getNgayLap() {

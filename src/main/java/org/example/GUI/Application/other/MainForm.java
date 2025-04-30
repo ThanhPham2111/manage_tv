@@ -15,11 +15,13 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import org.example.GUI.Application.Application;
+import org.example.GUI.Components.FormAccount.AccountManagementForm;
 import org.example.GUI.Components.FormAuth.LoginForm;
 import org.example.GUI.Components.FormBanHang.FormSell;
 import org.example.GUI.Components.FormCustomer.CustomerGUI;
 import org.example.GUI.Components.FormEmployee.EmployeeGUI;
 import org.example.GUI.Components.FormHoaDon.InvoiceView;
+
 import org.example.GUI.Components.FormProducts.ProductGUI;
 import org.example.GUI.Components.FormSupplier.SupplierGUI;
 import org.example.GUI.menu.Menu;
@@ -97,7 +99,8 @@ public class MainForm extends JLayeredPane {
                 Application.showForm(new SupplierGUI());
 
             } else if (index == 9) {
-                Application.logout();
+                Application.showForm(new AccountManagementForm());
+                
 
             } else if (index == 10) {
                 Application.logout();

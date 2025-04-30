@@ -1,45 +1,55 @@
+
 package org.example.GUI.Components.FormBanHang;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Image;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.EtchedBorder;
-import javax.swing.border.LineBorder;
-import javax.swing.border.TitledBorder;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-import org.example.ConnectDB.UtilsJDBC;
-import org.example.DTO.ProductDTO;
+import java.awt.*;
+import java.awt.event.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.*;
+import javax.swing.border.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
-public class FormSell extends JPanel {
+import org.example.BUS.InvoiceBUS;
+import org.example.ConnectDB.UtilsJDBC;
+import org.example.DTO.CustomerDTO;
+import org.example.DTO.ProductDTO;
+import org.example.DTO.UsersDTO;
 
-    private final DecimalFormat priceFormatter = new DecimalFormat("#,##0"); // Định dạng giá chung
+public class FormSell extends JPanel implements FormChooseCustomer.CustomerSelectedListener {
+
+    private final DecimalFormat priceFormatter = new DecimalFormat("#,##0");
+    private List<ProductDTO> allProducts;
 
     public FormSell() {
+        allProducts = new ArrayList<>();
         initComponents();
         loadProductsToTable();
         formatPriceColumn();
+        addSearchListener();
+
+        // Hiển thị mã hóa đơn lớn nhất
+        InvoiceBUS invoiceBUS = new InvoiceBUS();
+        String maxInvoiceId = invoiceBUS.getMaxInvoiceId();
+        if (maxInvoiceId != null && !maxInvoiceId.isEmpty()) {
+            String prefix = maxInvoiceId.substring(0, 2);
+            int number = Integer.parseInt(maxInvoiceId.substring(2)) + 1;
+            String newInvoiceId = String.format("%s%04d", prefix, number);
+            txtMaHoaDon.setText(newInvoiceId);
+        } else {
+            txtMaHoaDon.setText("HD001");
+        }
     }
 
     private void initComponents() {
@@ -150,7 +160,7 @@ public class FormSell extends JPanel {
                 txtMaSP.setText(maSP);
                 txtLoaiSP.setText(maLSP);
                 txtTenSP.setText(tenSP);
-                txtDonGia.setText(priceFormatter.format(donGia)); // Định dạng giá trị đơn giá
+                txtDonGia.setText(priceFormatter.format(donGia));
                 txtSoLuong.setText(soLuong.toString());
 
                 if (hinhAnh != null) {
@@ -192,7 +202,8 @@ public class FormSell extends JPanel {
         txtSoLuong.setPreferredSize(new Dimension(140, 60));
         txtSoLuong.setBorder(new TitledBorder(null, "Số lượng", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
                 null, Color.black));
-        txtSoLuong.setEditable(false);
+        txtSoLuong.setText("1");
+        txtSoLuong.setEditable(true);
         panel6.add(txtSoLuong);
         panel5.add(panel6, BorderLayout.CENTER);
         image.setPreferredSize(new Dimension(160, 100));
@@ -206,6 +217,7 @@ public class FormSell extends JPanel {
         if (addIcon != null)
             btnAdd.setIcon(addIcon);
         btnAdd.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btnAdd.addActionListener(e -> addProductToInvoice());
         panel5.add(btnAdd, BorderLayout.SOUTH);
         panel4.add(panel5, BorderLayout.SOUTH);
         add(panel4, BorderLayout.WEST);
@@ -215,24 +227,26 @@ public class FormSell extends JPanel {
 
         panel8.setPreferredSize(new Dimension(550, 526));
         panel8.setLayout(new BorderLayout());
-        panel9.setPreferredSize(new Dimension(630, 200));
+        panel9.setPreferredSize(new Dimension(800, 250)); // Tăng kích thước để chứa tất cả các trường
         panel9.setAutoscrolls(true);
         panel9.setLayout(new FlowLayout(FlowLayout.LEFT, 9, 9));
         txtMaHoaDon.setPreferredSize(new Dimension(150, 55));
         txtMaHoaDon.setBorder(new TitledBorder(null, "Mã hóa đơn", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
                 null, Color.black));
         panel9.add(txtMaHoaDon);
+        txtMaHoaDon.setEditable(false);
         textField10.setPreferredSize(new Dimension(0, 55));
         panel9.add(textField10);
         txtTongTien.setPreferredSize(new Dimension(500, 55));
         txtTongTien.setBorder(new TitledBorder(null, "Tổng tiền (triệu VND)", TitledBorder.LEADING,
                 TitledBorder.DEFAULT_POSITION, null, Color.black));
         panel9.add(txtTongTien);
+        txtTongTien.setEditable(false);
         txtKhachHang.setPreferredSize(new Dimension(150, 55));
         txtKhachHang.setBorder(new TitledBorder(null, "Khách hàng", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
                 null, Color.black));
         panel9.add(txtKhachHang);
-        btnChoose.setText("");
+        txtKhachHang.setEditable(false);
         ImageIcon chooseIcon = loadImageIcon("/org/example/GUI/resources/images/icons8_user_30px.png");
         if (chooseIcon != null)
             btnChoose.setIcon(chooseIcon);
@@ -242,6 +256,7 @@ public class FormSell extends JPanel {
         txtNhanvien.setBorder(new TitledBorder(null, "Nhân viên", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
                 null, Color.black));
         panel9.add(txtNhanvien);
+        txtNhanvien.setEditable(false);
         txtNgayLap.setPreferredSize(new Dimension(150, 55));
         txtNgayLap.setBorder(new TitledBorder(null, "Ngày lập", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
                 null, Color.black));
@@ -292,8 +307,12 @@ public class FormSell extends JPanel {
             columnModel2.getColumn(i).setPreferredWidth(150);
         }
         tableSell2.setBorder(new BevelBorder(BevelBorder.LOWERED));
-        tableSell2
-                .setModel(new DefaultTableModel(new Object[][] { { null, null, null, null, null } }, getHeaderSell2()));
+        tableSell2.setModel(new DefaultTableModel(new Object[][] {}, getHeaderSell2()) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        });
         scrollPane1.setViewportView(tableSell2);
         panel10.add(scrollPane1, BorderLayout.CENTER);
         panel8.add(panel10, BorderLayout.CENTER);
@@ -315,6 +334,131 @@ public class FormSell extends JPanel {
         panel13.add(btnTong);
         panel8.add(panel13, BorderLayout.SOUTH);
         add(panel8, BorderLayout.CENTER);
+
+        // Sự kiện nút chọn khách hàng
+        btnChoose.addActionListener(e -> {
+            JDialog dialog = new JDialog(SwingUtilities.getWindowAncestor(this), "Chọn Khách Hàng",
+                    Dialog.ModalityType.APPLICATION_MODAL);
+            FormChooseCustomer chooseCustomerForm = new FormChooseCustomer();
+            chooseCustomerForm.setCustomerSelectedListener(this);
+            dialog.add(chooseCustomerForm);
+            dialog.setSize(800, 600);
+            dialog.setLocationRelativeTo(this);
+            dialog.setVisible(true);
+        });
+
+        // Gán ngày và giờ hiện tại
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        String currentDate = now.format(dateFormatter);
+        String currentTime = now.format(timeFormatter);
+        txtNgayLap.setText(currentDate);
+        txtGioLap.setText(currentTime);
+    }
+
+    private void addProductToInvoice() {
+        int selectedRow = tableSell.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn một sản phẩm từ danh sách!", "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        String maSP = txtMaSP.getText().trim();
+        String tenSP = txtTenSP.getText().trim();
+        String donGiaStr = txtDonGia.getText().trim().replace(",", "");
+        String soLuongStr = txtSoLuong.getText().trim();
+
+        if (maSP.isEmpty() || tenSP.isEmpty() || donGiaStr.isEmpty() || soLuongStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Thông tin sản phẩm không đầy đủ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        float donGia;
+        int soLuong;
+        try {
+            donGia = Float.parseFloat(donGiaStr);
+            soLuong = Integer.parseInt(soLuongStr);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Đơn giá hoặc số lượng không hợp lệ!", "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        int availableQuantity = (Integer) tableSell.getValueAt(selectedRow, 4);
+        if (soLuong <= 0 || soLuong > availableQuantity) {
+            JOptionPane.showMessageDialog(this, "Số lượng không hợp lệ hoặc vượt quá tồn kho!", "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        float thanhTien = donGia * soLuong;
+
+        DefaultTableModel model = (DefaultTableModel) tableSell2.getModel();
+        int stt = model.getRowCount() + 1;
+
+        model.addRow(new Object[] {
+                stt,
+                maSP,
+                tenSP,
+                donGia,
+                soLuong,
+                thanhTien
+        });
+
+        formatInvoiceTableColumns();
+
+        updateTotalAmount();
+
+        txtMaSP.setText("");
+        txtLoaiSP.setText("");
+        txtTenSP.setText("");
+        txtDonGia.setText("");
+        txtSoLuong.setText("1");
+        image.setIcon(null);
+        image.setText("Không có ảnh");
+
+        JOptionPane.showMessageDialog(this, "Thêm sản phẩm vào hóa đơn thành công!", "Thành công",
+                JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void formatInvoiceTableColumns() {
+        DefaultTableCellRenderer renderer = new DefaultTableCellRenderer() {
+            @Override
+            protected void setValue(Object value) {
+                if (value instanceof Number) {
+                    setText(priceFormatter.format(((Number) value).floatValue()));
+                } else {
+                    setText((value == null) ? "" : value.toString());
+                }
+            }
+        };
+        TableColumn priceColumn = tableSell2.getColumnModel().getColumn(3);
+        TableColumn totalColumn = tableSell2.getColumnModel().getColumn(5);
+        priceColumn.setCellRenderer(renderer);
+        totalColumn.setCellRenderer(renderer);
+    }
+
+    private void updateTotalAmount() {
+        DefaultTableModel model = (DefaultTableModel) tableSell2.getModel();
+        float total = 0;
+        for (int i = 0; i < model.getRowCount(); i++) {
+            float thanhTien = (Float) model.getValueAt(i, 5);
+            total += thanhTien;
+        }
+        txtTongTien.setText(priceFormatter.format(total));
+    }
+
+    @Override
+    public void onCustomerSelected(CustomerDTO customer) {
+        if (customer != null) {
+            txtKhachHang.setText(customer.getTenKH() + " - " + customer.getMaKH());
+            System.out.println("Selected customer: " + customer.getMaKH());
+        } else {
+            txtKhachHang.setText("");
+            System.out.println("No customer selected");
+        }
     }
 
     private ImageIcon loadImageIcon(String path) {
@@ -337,9 +481,8 @@ public class FormSell extends JPanel {
 
     private void loadProductsToTable() {
         Connection conn = UtilsJDBC.getConnectDB();
-        List<ProductDTO> products = new ArrayList<>();
-        String query = "SELECT MaSP, MaLSP, TenSP, DonGia, SoLuong, HinhAnh, TrangThai FROM product"; // Sửa thành
-                                                                                                      // product
+        allProducts.clear();
+        String query = "SELECT MaSP, MaLSP, TenSP, DonGia, SoLuong, HinhAnh, TrangThai FROM product";
         try (PreparedStatement pstmt = conn.prepareStatement(query);
                 ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
@@ -352,48 +495,53 @@ public class FormSell extends JPanel {
                 product.setHinhAnh(rs.getString("HinhAnh"));
                 product.setTrangthai(rs.getInt("TrangThai"));
                 if (product.getSoLuong() > 0) {
-                    products.add(product);
+                    allProducts.add(product);
                 }
             }
-            String[] headers = { "Mã sản phẩm", "Mã loại", "Tên", "Đơn giá", "Số lượng", "Hình ảnh", "Trạng thái" };
-            DefaultTableModel model = new DefaultTableModel(headers, 0) {
-                @Override
-                public boolean isCellEditable(int row, int column) {
-                    return false;
-                }
-            };
-            String basePath = "/org/example/GUI/resources/imageTopic/";
-            for (ProductDTO product : products) {
-                ImageIcon imageIcon = null;
-                String imagePath = basePath + product.getHinhAnh();
-                java.net.URL imgURL = getClass().getResource(imagePath);
-                if (imgURL != null) {
-                    imageIcon = new ImageIcon(imgURL);
-                    Image img = imageIcon.getImage();
-                    Image scaledImg = img.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
-                    imageIcon = new ImageIcon(scaledImg);
-                } else {
-                    System.err.println("Không thể tải hình ảnh: " + imagePath);
-                }
-                Object[] row = {
-                        product.getMaSP(),
-                        product.getMaLSP(),
-                        product.getTenSP(),
-                        product.getDonGia(),
-                        product.getSoLuong(),
-                        imageIcon,
-                        product.getTrangthai() == 1 ? "Hoạt động" : "Ngừng bán"
-                };
-                model.addRow(row);
-            }
-            tableSell.setModel(model);
-            tableSell.getColumn("Hình ảnh").setCellRenderer(new ImageRenderer());
+            updateTable(allProducts);
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy dữ liệu sản phẩm: " + e.getMessage());
             e.printStackTrace();
         } finally {
             UtilsJDBC.closeConnection();
         }
+    }
+
+    private void updateTable(List<ProductDTO> products) {
+        String[] headers = getHeaderSell1();
+        DefaultTableModel model = new DefaultTableModel(headers, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        String basePath = "/org/example/GUI/resources/imageTopic/";
+        for (ProductDTO product : products) {
+            ImageIcon imageIcon = null;
+            String imagePath = basePath + product.getHinhAnh();
+            java.net.URL imgURL = getClass().getResource(imagePath);
+            if (imgURL != null) {
+                imageIcon = new ImageIcon(imgURL);
+                Image img = imageIcon.getImage();
+                Image scaledImg = img.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+                imageIcon = new ImageIcon(scaledImg);
+            } else {
+                System.err.println("Không thể tải hình ảnh: " + imagePath);
+            }
+            Object[] row = {
+                    product.getMaSP(),
+                    product.getMaLSP(),
+                    product.getTenSP(),
+                    product.getDonGia(),
+                    product.getSoLuong(),
+                    imageIcon,
+                    product.getTrangthai() == 1 ? "Hoạt động" : "Ngừng bán"
+            };
+            model.addRow(row);
+        }
+        tableSell.setModel(model);
+        tableSell.getColumn("Hình ảnh").setCellRenderer(new ImageRenderer());
+        formatPriceColumn();
     }
 
     private void formatPriceColumn() {
@@ -424,6 +572,70 @@ public class FormSell extends JPanel {
             }
             return this;
         }
+    }
+
+    private void addSearchListener() {
+        txtSearch.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                searchProducts();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                searchProducts();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                searchProducts();
+            }
+        });
+
+        comboBox.addActionListener(e -> searchProducts());
+    }
+
+    private void searchProducts() {
+        String searchText = txtSearch.getText().trim().toLowerCase();
+        String searchType = comboBox.getSelectedItem().toString();
+        List<ProductDTO> filteredProducts = new ArrayList<>();
+
+        if (searchText.isEmpty() && searchType.equals("Tất cả")) {
+            filteredProducts.addAll(allProducts);
+        } else {
+            for (ProductDTO product : allProducts) {
+                boolean matches = false;
+                switch (searchType) {
+                    case "Tất cả":
+                        matches = product.getMaSP().toLowerCase().contains(searchText) ||
+                                product.getMaLSP().toLowerCase().contains(searchText) ||
+                                product.getTenSP().toLowerCase().contains(searchText) ||
+                                String.valueOf(product.getDonGia()).contains(searchText) ||
+                                String.valueOf(product.getSoLuong()).contains(searchText);
+                        break;
+                    case "Mã sản phẩm":
+                        matches = product.getMaSP().toLowerCase().contains(searchText);
+                        break;
+                    case "Mã loại":
+                        matches = product.getMaLSP().toLowerCase().contains(searchText);
+                        break;
+                    case "Tên":
+                        matches = product.getTenSP().toLowerCase().contains(searchText);
+                        break;
+                    case "Đơn giá":
+                        matches = String.valueOf(product.getDonGia()).contains(searchText);
+                        break;
+                    case "Số lượng":
+                        matches = String.valueOf(product.getSoLuong()).contains(searchText);
+                        break;
+                }
+                if (matches) {
+                    filteredProducts.add(product);
+                }
+            }
+        }
+
+        updateTable(filteredProducts);
     }
 
     private JPanel panel1, panel4, panel2, panel5, panel6, panel7, panel8, panel9, panel10, panel11, panel12, panel13;

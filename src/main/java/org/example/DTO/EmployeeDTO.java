@@ -15,8 +15,8 @@ public class EmployeeDTO {
     }
 
     // Constructor đầy đủ tham số
-    public EmployeeDTO(String maNV, String tenNV, Date ngaySinh, String diaChi, String sdt, int trangThai) {
-        this.maNV = maNV;
+    public EmployeeDTO(Object maNV2, String tenNV, Date ngaySinh, String diaChi, String sdt, int trangThai) {
+        this.maNV = (String) maNV2;
         this.tenNV = tenNV;
         this.ngaySinh = ngaySinh;
         this.diaChi = diaChi;

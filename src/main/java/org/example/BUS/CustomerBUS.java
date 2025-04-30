@@ -34,7 +34,7 @@ public class CustomerBUS {
 
     // Kiểm tra xem mã khách hàng đã tồn tại chưa
     public Boolean checkId(String id) {
-        for (CustomerDTO customer : listKh) {  
+        for (CustomerDTO customer : listKh) {
             if (id.equals(customer.getMaKH())) {
                 return true;
             }
@@ -90,7 +90,40 @@ public class CustomerBUS {
         }
     }
 
-    // Lọc khách hàng theo trạng thái (tương tự filterByStatus trong phiên bản cũ)
+    // Tìm kiếm khách hàng theo giá trị và tiêu chí
+    public ArrayList<CustomerDTO> search(String value, String type) {
+        ArrayList<CustomerDTO> result = new ArrayList<>();
+        String normalizedValue = removeAccents(value.toLowerCase());
+
+        for (CustomerDTO kh : getList()) {
+            if (type.equals("Tất cả")) {
+                // Kiểm tra tất cả các trường
+                if (removeAccents(kh.getMaKH().toLowerCase()).contains(normalizedValue) ||
+                        removeAccents(kh.getTenKH().toLowerCase()).contains(normalizedValue) ||
+                        removeAccents(kh.getDiaChi().toLowerCase()).contains(normalizedValue) ||
+                        removeAccents(kh.getSdt().toLowerCase()).contains(normalizedValue) ||
+                        removeAccents(kh.getTrangThai() == 0 ? "Hiện" : "Ẩn").contains(normalizedValue)) {
+                    result.add(kh);
+                }
+            } else {
+                // Kiểm tra theo trường cụ thể
+                String field = switch (type) {
+                    case "Mã khách hàng" -> "MaKH";
+                    case "Tên khách hàng" -> "TenKH";
+                    case "Số điện thoại" -> "SDT";
+                    case "Địa chỉ" -> "Địa chỉ";
+                    case "Trạng thái" -> "Trạng thái";
+                    default -> "";
+                };
+                if (isMatched(kh, field, value)) {
+                    result.add(kh);
+                }
+            }
+        }
+        return result;
+    }
+
+    // Lọc khách hàng theo trạng thái
     public ArrayList<CustomerDTO> filterByStatus(int status) {
         ArrayList<CustomerDTO> result = new ArrayList<>();
         for (CustomerDTO kh : getList()) {
@@ -101,7 +134,7 @@ public class CustomerBUS {
         return result;
     }
 
-    // Lấy ID tiếp theo (tương tự getNextID trong phiên bản cũ)
+    // Lấy ID tiếp theo
     public String getNextID() {
         if (listKh == null || listKh.isEmpty()) {
             return "KH1";

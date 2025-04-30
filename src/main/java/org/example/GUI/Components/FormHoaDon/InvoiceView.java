@@ -113,9 +113,9 @@ public class InvoiceView extends JPanel {
 
         for (InvoiceDTO invoice : invoices) {
             invoiceTableModel.addRow(new Object[] {
-                    invoice.getMaHoaDon(),
-                    invoice.getMaKhachHang(),
-                    invoice.getMaNhanVien(),
+                    invoice.getMaHD(),
+                    invoice.getMaKH(),
+                    invoice.getMaNV(),
                     new SimpleDateFormat("dd/MM/yyyy").format(invoice.getNgayLap()),
                     new SimpleDateFormat("HH:mm:ss").format(invoice.getGioNhap()),
                     priceFormatter.format(invoice.getTongTien()) + " VNĐ"
@@ -274,9 +274,9 @@ public class InvoiceView extends JPanel {
             InvoiceDTO invoice = invoiceBUS.getInvoice(maHoaDon);
 
             infoPanel.setIgnoreRepaint(true);
-            invoiceIDLabel.setText(invoice.getMaHoaDon());
-            customerLabel.setText(invoice.getMaKhachHang());
-            employeeLabel.setText(invoice.getMaNhanVien());
+            invoiceIDLabel.setText(invoice.getMaHD());
+            customerLabel.setText(invoice.getMaKH());
+            employeeLabel.setText(invoice.getMaNV());
             dateLabel.setText(new SimpleDateFormat("dd/MM/yyyy").format(invoice.getNgayLap()));
             totalLabel.setText(priceFormatter.format(invoice.getTongTien()) + " VNĐ");
             infoPanel.setIgnoreRepaint(false);

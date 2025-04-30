@@ -55,9 +55,6 @@ public class UserBUS {
         return false;
     }
 
-    // public boolean getInfoUser(String userEmail, String password) {
-    // return userDAO.getInfoUser(userEmail, password);
-    // }
     public boolean deleteUser(int userID) {
         if (userDAO.deleteUser(userID)) {
             listAccount.removeIf(user -> user.getUserID() == userID);
@@ -100,7 +97,10 @@ public class UserBUS {
     }
 
     public String[] getHeaders() {
-        return new String[] { "Tên người dùng", "Email", "Mật khẩu", "Tên dầy đủ ", "Vai trò" };
+        return new String[] { "Tên người dùng", "Email", "Mật khẩu", "Tên đầy đủ", "Vai trò", "Mã nhân viên" }; // Thêm
+                                                                                                                // "Mã
+                                                                                                                // nhân
+                                                                                                                // viên"
     }
 
     public static ArrayList<UsersDTO> search(String keyword, String type) {
@@ -108,16 +108,18 @@ public class UserBUS {
         listAccount.forEach((user) -> {
             switch (type) {
                 case "Tất cả":
-                    if (String.valueOf(user.getUserID()).toString().toLowerCase().contains(keyword.toLowerCase())
+                    if (String.valueOf(user.getUserID()).toLowerCase().contains(keyword.toLowerCase())
                             || user.getUserName().toLowerCase().contains(keyword.toLowerCase())
                             || user.getUserEmail().toLowerCase().contains(keyword.toLowerCase())
                             || user.getUserPassword().toLowerCase().contains(keyword.toLowerCase())
-                            || user.getUserFullName().toString().toLowerCase().contains(keyword.toLowerCase())) {
+                            || user.getUserFullName().toLowerCase().contains(keyword.toLowerCase())
+                            || (user.getMaNV() != null
+                                    && user.getMaNV().toLowerCase().contains(keyword.toLowerCase()))) {
                         result.add(user);
                     }
                     break;
                 case "Mã người dùng":
-                    if (String.valueOf(user.getUserID()).toString().toLowerCase().contains(keyword.toLowerCase())) {
+                    if (String.valueOf(user.getUserID()).toLowerCase().contains(keyword.toLowerCase())) {
                         result.add(user);
                     }
                     break;
@@ -137,14 +139,17 @@ public class UserBUS {
                     }
                     break;
                 case "Họ và tên":
-                    if (user.getUserFullName().toString().toLowerCase().contains(keyword.toLowerCase())) {
+                    if (user.getUserFullName().toLowerCase().contains(keyword.toLowerCase())) {
+                        result.add(user);
+                    }
+                    break;
+                case "Mã nhân viên":
+                    if (user.getMaNV() != null && user.getMaNV().toLowerCase().contains(keyword.toLowerCase())) {
                         result.add(user);
                     }
                     break;
             }
-
         });
         return result;
     }
-
 }

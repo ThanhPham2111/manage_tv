@@ -25,7 +25,7 @@ public class EmployeeBUS {
     }
 
     // Lấy nhân viên theo mã nhân viên
-    public EmployeeDTO getEmployeeByMaNV(String maNV) {
+    public EmployeeDTO getEmployeeByMaNV(Object maNV) {
         return employeeDAO.getEmployeeByMaNV(maNV);
     }
 

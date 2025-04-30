@@ -43,12 +43,12 @@ public class EmployeeDAO {
     }
 
     // Lấy nhân viên theo mã nhân viên
-    public EmployeeDTO getEmployeeByMaNV(String maNV) {
+    public EmployeeDTO getEmployeeByMaNV(Object maNV) {
         Connection con = UtilsJDBC.getConnectDB();
         EmployeeDTO employee = null;
         try {
             PreparedStatement stmt = con.prepareStatement("SELECT * FROM employee WHERE MaNV = ?");
-            stmt.setString(1, maNV);
+            stmt.setString(1, (String) maNV);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {

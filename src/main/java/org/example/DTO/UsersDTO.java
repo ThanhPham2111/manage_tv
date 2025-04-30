@@ -7,20 +7,23 @@ public class UsersDTO {
     private String userPassword;
     private String userFullName;
     private Boolean isAdmin;
+    private String maNV; // Thêm trường maNV để liên kết với EmployeeDTO
 
     public UsersDTO() {
     }
 
     public UsersDTO(int userID, String userName, String userEmail, String userPassword, String userFullName,
-            Boolean isAdmin) {
+            Boolean isAdmin, String maNV) {
         this.userID = userID;
         this.userName = userName;
         this.userEmail = userEmail;
         this.userPassword = userPassword;
         this.userFullName = userFullName;
         this.isAdmin = isAdmin;
+        this.maNV = maNV;
     }
 
+    // Getters
     public int getUserID() {
         return userID;
     }
@@ -43,6 +46,10 @@ public class UsersDTO {
 
     public Boolean getIsAdmin() {
         return isAdmin;
+    }
+
+    public String getMaNV() {
+        return maNV; // Triển khai phương thức getMaNV
     }
 
     // Setters
@@ -70,7 +77,10 @@ public class UsersDTO {
         this.isAdmin = isAdmin;
     }
 
-    // toString() để dễ dàng debug và log thông tin
+    public void setMaNV(String maNV) {
+        this.maNV = maNV;
+    }
+
     @Override
     public String toString() {
         return "UsersDTO{" +
@@ -80,6 +90,7 @@ public class UsersDTO {
                 ", userPassword='" + userPassword + '\'' +
                 ", userFullName='" + userFullName + '\'' +
                 ", isAdmin=" + isAdmin +
+                ", maNV='" + maNV + '\'' +
                 '}';
     }
 }

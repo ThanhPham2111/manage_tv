@@ -12,7 +12,6 @@ import org.example.DTO.UsersDTO;
 
 public class UserDAO {
     public UserDAO() {
-
     }
 
     public ArrayList<UsersDTO> getAllUsers() {
@@ -22,10 +21,15 @@ public class UserDAO {
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(query)) {
             while (rs.next()) {
-                users.add(new UsersDTO(rs.getInt("userID"), rs.getString("userName"),
+                users.add(new UsersDTO(
+                        rs.getInt("userID"),
+                        rs.getString("userName"),
                         rs.getString("userEmail"),
-                        rs.getString("userPassword"), rs.getString("userFullName"),
-                        rs.getBoolean("isAdmin")));
+                        rs.getString("userPassword"),
+                        rs.getString("userFullName"),
+                        rs.getBoolean("isAdmin"),
+                        rs.getString("maNV") // Thêm maNV
+                ));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -42,10 +46,15 @@ public class UserDAO {
             stmt.setString(1, userName);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                return new UsersDTO(rs.getInt("userID"), rs.getString("userName"),
+                return new UsersDTO(
+                        rs.getInt("userID"),
+                        rs.getString("userName"),
                         rs.getString("userEmail"),
-                        rs.getString("userPassword"), rs.getString("userFullName"),
-                        rs.getBoolean("isAdmin"));
+                        rs.getString("userPassword"),
+                        rs.getString("userFullName"),
+                        rs.getBoolean("isAdmin"),
+                        rs.getString("maNV") // Thêm maNV
+                );
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -58,7 +67,7 @@ public class UserDAO {
     public UsersDTO getInfoUser(String userName, String password) {
         UsersDTO user = new UsersDTO();
         try {
-            Connection conn = (Connection) UtilsJDBC.getConnectDB();
+            Connection conn = UtilsJDBC.getConnectDB();
             String query = "SELECT * FROM users WHERE userName = ? AND userPassword = ?";
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setString(1, userName);
@@ -71,6 +80,7 @@ public class UserDAO {
                 user.setUserPassword(rs.getString("userPassword"));
                 user.setUserFullName(rs.getString("userFullName"));
                 user.setIsAdmin(rs.getBoolean("isAdmin"));
+                user.setMaNV(rs.getString("maNV")); // Thêm maNV
             }
             conn.close();
         } catch (Exception e) {
@@ -101,7 +111,7 @@ public class UserDAO {
             return false;
         }
         try {
-            Connection conn = (Connection) UtilsJDBC.getConnectDB();
+            Connection conn = UtilsJDBC.getConnectDB();
             String query = "SELECT * FROM users WHERE userEmail = ? AND userPassword = ?";
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setString(1, userEmail);
@@ -118,17 +128,16 @@ public class UserDAO {
     }
 
     public boolean signUp(UsersDTO user) {
-        String query = "INSERT INTO users(userName, userEmail, userPassword, userFullName, isAdmin) VALUES(?, ?, ?, ?, ?)";
+        String query = "INSERT INTO users(userName, userEmail, userPassword, userFullName, isAdmin, maNV) VALUES(?, ?, ?, ?, ?, ?)";
         try (Connection conn = UtilsJDBC.getConnectDB();
                 PreparedStatement stmt = conn.prepareStatement(query)) {
-
             stmt.setString(1, user.getUserName());
             stmt.setString(2, user.getUserEmail());
+            stmt.setString(3, user.getUserPassword());
             stmt.setString(4, user.getUserFullName());
-            stmt.setBoolean(5, false); //
-
+            stmt.setBoolean(5, user.getIsAdmin());
+            stmt.setString(6, user.getMaNV()); // Thêm maNV
             return stmt.executeUpdate() > 0;
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -136,16 +145,21 @@ public class UserDAO {
     }
 
     public UsersDTO getUserByID(int userID) {
-
         String query = "SELECT * FROM users WHERE userID = ?";
         try (Connection conn = UtilsJDBC.getConnectDB();
                 PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, userID);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return new UsersDTO(rs.getInt("userID"), rs.getString("userName"),
-                            rs.getString("userEmail"), rs.getString("userPassword"),
-                            rs.getString("userFullName"), rs.getBoolean("isAdmin"));
+                    return new UsersDTO(
+                            rs.getInt("userID"),
+                            rs.getString("userName"),
+                            rs.getString("userEmail"),
+                            rs.getString("userPassword"),
+                            rs.getString("userFullName"),
+                            rs.getBoolean("isAdmin"),
+                            rs.getString("maNV") // Thêm maNV
+                    );
                 }
             }
         } catch (SQLException e) {
@@ -158,7 +172,6 @@ public class UserDAO {
         String query = "DELETE FROM users WHERE userID = ?";
         try (Connection conn = UtilsJDBC.getConnectDB();
                 PreparedStatement stmt = conn.prepareStatement(query)) {
-
             stmt.setInt(1, userID);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -168,14 +181,15 @@ public class UserDAO {
     }
 
     public boolean updateUser(UsersDTO user) {
-        String sql = "UPDATE users SET userFullName = ?, userPassword = ?, userEmail = ? WHERE userID = ?";
+        String sql = "UPDATE users SET userFullName = ?, userPassword = ?, userEmail = ?, maNV = ? WHERE userID = ?";
         try {
             Connection conn = UtilsJDBC.getConnectDB();
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, user.getUserFullName());
             stmt.setString(2, user.getUserPassword());
             stmt.setString(3, user.getUserEmail());
-            stmt.setInt(4, user.getUserID());
+            stmt.setString(4, user.getMaNV()); // Thêm maNV
+            stmt.setInt(5, user.getUserID());
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -184,7 +198,7 @@ public class UserDAO {
     }
 
     public boolean addUser(UsersDTO user) {
-        String sql = "INSERT INTO users (userName, userEmail, userPassword, userFullName, isAdmin) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO users (userName, userEmail, userPassword, userFullName, isAdmin, maNV) VALUES (?, ?, ?, ?, ?, ?)";
         try {
             Connection conn = UtilsJDBC.getConnectDB();
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -193,33 +207,29 @@ public class UserDAO {
             stmt.setString(3, user.getUserPassword());
             stmt.setString(4, user.getUserFullName());
             stmt.setBoolean(5, user.getIsAdmin());
-
+            stmt.setString(6, user.getMaNV()); // Thêm maNV
             return stmt.executeUpdate() > 0;
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
-
     }
 
     public boolean addUsersBatch(ArrayList<UsersDTO> users) {
-        String sql = "INSERT INTO users (userName, userEmail, userPassword, userFullName, isAdmin) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO users (userName, userEmail, userPassword, userFullName, isAdmin, maNV) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = UtilsJDBC.getConnectDB();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
-
             for (UsersDTO user : users) {
                 stmt.setString(1, user.getUserName());
                 stmt.setString(2, user.getUserEmail());
                 stmt.setString(3, user.getUserPassword());
                 stmt.setString(4, user.getUserFullName());
                 stmt.setBoolean(5, user.getIsAdmin());
+                stmt.setString(6, user.getMaNV()); // Thêm maNV
                 stmt.addBatch();
             }
-
             int[] affectedRows = stmt.executeBatch();
             return affectedRows.length == users.size();
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -244,7 +254,7 @@ public class UserDAO {
     }
 
     public String getUserFullName(int userID) {
-        String query = "SELECT userFullName FROM user WHERE userID = ?";
+        String query = "SELECT userFullName FROM users WHERE userID = ?";
         try (Connection conn = UtilsJDBC.getConnectDB();
                 PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, userID);
