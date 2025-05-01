@@ -41,7 +41,7 @@ public class FormSell extends JPanel implements FormChooseCustomer.CustomerSelec
 
         // Hiển thị mã hóa đơn lớn nhất
         InvoiceBUS invoiceBUS = new InvoiceBUS();
-        String maxInvoiceId = invoiceBUS.getMaxInvoiceId();
+        String maxInvoiceId = invoiceBUS.getMaxInvoiceID();
         if (maxInvoiceId != null && !maxInvoiceId.isEmpty()) {
             String prefix = maxInvoiceId.substring(0, 2);
             int number = Integer.parseInt(maxInvoiceId.substring(2)) + 1;

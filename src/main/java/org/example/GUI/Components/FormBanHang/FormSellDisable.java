@@ -248,7 +248,7 @@ public class FormSellDisable extends JPanel {
         txtMaHD.setPreferredSize(new Dimension(200, 55));
         txtMaHD.setBorder(new TitledBorder(null, "Mã hóa đơn", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
                 null, Color.black));
-        String nextInvoiceID = invoiceBUS.getMaxInvoiceId();
+        String nextInvoiceID = invoiceBUS.getMaxInvoiceID();
         if (nextInvoiceID != null && !nextInvoiceID.isEmpty()) {
             String prefix = nextInvoiceID.substring(0, 2);
             int number = Integer.parseInt(nextInvoiceID.substring(2)) + 1;
@@ -483,7 +483,7 @@ public class FormSellDisable extends JPanel {
             image.setIcon(null);
             refresh();
 
-            String nextInvoiceID = invoiceBUS.getMaxInvoiceId();
+            String nextInvoiceID = invoiceBUS.getMaxInvoiceID();
             if (nextInvoiceID != null && !nextInvoiceID.isEmpty()) {
                 String prefix = nextInvoiceID.substring(0, 2);
                 int number = Integer.parseInt(nextInvoiceID.substring(2)) + 1;
