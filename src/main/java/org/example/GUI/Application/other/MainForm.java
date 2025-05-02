@@ -16,8 +16,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.example.GUI.Application.Application;
 import org.example.GUI.Components.FormAccount.AccountManagementForm;
-import org.example.GUI.Components.FormAuth.LoginForm;
-import org.example.GUI.Components.FormBanHang.FormSell;
+import org.example.GUI.Components.FormBanHang.FormSellDisable;
 import org.example.GUI.Components.FormCustomer.CustomerGUI;
 import org.example.GUI.Components.FormEmployee.EmployeeGUI;
 import org.example.GUI.Components.FormHoaDon.InvoiceView;
@@ -78,7 +77,7 @@ public class MainForm extends JLayeredPane {
     private void initMenuEvent() {
         menu.addMenuEvent((int index, int subIndex, MenuAction action) -> {
             if (index == 0) {
-                Application.showForm(new FormSell());
+                Application.showForm(new FormSellDisable());
             } else if (index == 1) {
 
             } else if (index == 2) {
@@ -100,7 +99,6 @@ public class MainForm extends JLayeredPane {
 
             } else if (index == 9) {
                 Application.showForm(new AccountManagementForm());
-                
 
             } else if (index == 10) {
                 Application.logout();

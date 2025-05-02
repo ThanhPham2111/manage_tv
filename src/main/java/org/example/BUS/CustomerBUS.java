@@ -135,23 +135,27 @@ public class CustomerBUS {
     }
 
     // Lấy ID tiếp theo
-    public String getNextID() {
-        if (listKh == null || listKh.isEmpty()) {
-            return "KH1";
-        }
-        int maxId = 0;
-        for (CustomerDTO kh : listKh) {
+  public String getNextID() {
+    if (listKh == null || listKh.isEmpty()) {
+        return "KH001";
+    }
+    int maxId = 0;
+    for (CustomerDTO kh : listKh) {
+        String id = kh.getMaKH();
+        if (id.startsWith("KH")) {
             try {
-                int idNum = Integer.parseInt(kh.getMaKH().replace("KH", ""));
+                int idNum = Integer.parseInt(id.replace("KH", ""));
                 if (idNum > maxId) {
                     maxId = idNum;
                 }
             } catch (NumberFormatException e) {
-                // Bỏ qua nếu mã không đúng định dạng
+                // Log lỗi nhưng không bỏ qua
+                System.err.println("Invalid MaKH format: " + id);
             }
         }
-        return "KH" + (maxId + 1);
     }
+    return String.format("KH%03d", maxId + 1);
+}
 
     // Hiển thị danh sách khách hàng (dùng để debug)
     public void display() {
