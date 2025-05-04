@@ -8,7 +8,7 @@ public class UtilsDateFormat {
     private final static SimpleDateFormat sdfTime = new SimpleDateFormat("HH:mm:ss");
     private final static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
-    public static String formatDate(java.util.Date date){
+    public static String formatDate(Date date){
         return sdfDate.format(date);
     }
 
@@ -20,13 +20,6 @@ public class UtilsDateFormat {
         return formatDate(date) + " " + formatTime(date);
     }
 
-    public static String formatDay(Date date){
-        return new SimpleDateFormat("dd").format(date);
-    }
-
-    public static String formatMonth(Date date){
-        return new SimpleDateFormat("MM").format(date);
-    }
     
     public static String formatYear(Date date){
         return new SimpleDateFormat("yyyy").format(date);
@@ -36,6 +29,10 @@ public class UtilsDateFormat {
         return new SimpleDateFormat("MM/yyyy").format(date);
     }
 
+    public static String formatCustom(String pattern, Date date){
+        return new SimpleDateFormat(pattern).format(date);
+    }
+    
     // dateString chỉ nhận được dạng:
     // dd/MM/yyyy
     // dd/MM/yyyy HH:mm:ss

@@ -248,14 +248,8 @@ public class FormSellDisable extends JPanel {
         txtMaHD.setPreferredSize(new Dimension(200, 55));
         txtMaHD.setBorder(new TitledBorder(null, "Mã hóa đơn", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
                 null, Color.black));
-        String nextInvoiceID = invoiceBUS.getMaxInvoiceId();
-        if (nextInvoiceID != null && !nextInvoiceID.isEmpty()) {
-            String prefix = nextInvoiceID.substring(0, 2);
-            int number = Integer.parseInt(nextInvoiceID.substring(2)) + 1;
-            txtMaHD.setText(String.format("%s%04d", prefix, number));
-        } else {
-            txtMaHD.setText("HD001");
-        }
+        String nextInvoiceID = invoiceBUS.getNextInvoiceID();
+        txtMaHD.setText(nextInvoiceID);
         panel9.add(txtMaHD);
         textField10.setPreferredSize(new Dimension(0, 55));
         panel9.add(textField10);
@@ -452,24 +446,15 @@ public class FormSellDisable extends JPanel {
             JOptionPane.showMessageDialog(this, "Tổng tiền không hợp lệ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
-
-        InvoiceDTO invoice = new InvoiceDTO(maHD, maKH, maNV, ngayLap, tongTien);
-        invoice.setGioNhap(gioNhap);
+        InvoiceDTO invoice = new InvoiceDTO(maHD, maKH, maNV, ngayLap, gioNhap, tongTien);
+        invoice.setInvoiceDetails(dscthd);
 
         try {
-            if (!invoiceBUS.addInvoice(invoice)) {
-                throw new SQLException("Không thể thêm hóa đơn");
-            }
-            for (InvoiceDetailDTO detail : dscthd) {
-                if (!invoiceBUS.addInvoiceDetail(detail)) {
-                    throw new SQLException("Không thể thêm chi tiết hóa đơn");
-                }
-                ProductDTO product = productBUS.getProductDTO(detail.getMaSP());
-                int newQuantity = product.getSoLuong() - detail.getSoLuong();
-                if (!productBUS.updateSoLuong(detail.getMaSP(), newQuantity)) {
-                    throw new SQLException("Không thể cập nhật số lượng sản phẩm");
-                }
-            }
+            // if (!invoiceBUS.addInvoice(invoice)) {
+            //     throw new SQLException("Không thể thêm hóa đơn");
+            // }
+
+            invoiceBUS.addInvoice(invoice);
 
             dscthd.clear();
             setDataToTableInvoiceDetails(dscthd);
@@ -483,14 +468,8 @@ public class FormSellDisable extends JPanel {
             image.setIcon(null);
             refresh();
 
-            String nextInvoiceID = invoiceBUS.getMaxInvoiceId();
-            if (nextInvoiceID != null && !nextInvoiceID.isEmpty()) {
-                String prefix = nextInvoiceID.substring(0, 2);
-                int number = Integer.parseInt(nextInvoiceID.substring(2)) + 1;
-                txtMaHD.setText(String.format("%s%04d", prefix, number));
-            } else {
-                txtMaHD.setText("HD001");
-            }
+            String nextInvoiceID = invoiceBUS.getNextInvoiceID();
+            txtMaHD.setText(nextInvoiceID);
 
             JOptionPane.showMessageDialog(this, "Thanh toán thành công!", "Thành công",
                     JOptionPane.INFORMATION_MESSAGE);

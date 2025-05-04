@@ -28,14 +28,14 @@ public class Menu extends JPanel {
             { "Bán Hàng" },
             { "Nhập Hàng" },
             { "Sản Phẩm" },
-            { "Loại Sản Phẩm" },
+
             { "Hoá Đơn" },
             { "Phiếu Nhập" },
             { "Nhân Viên" },
             { "Khách Hàng" },
             { "Nhà Cung Cấp" },
             { "Tài Khoản" },
-            { "Quyền" },
+
             { "Thống Kê" }
     };
 

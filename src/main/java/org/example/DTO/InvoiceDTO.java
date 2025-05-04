@@ -2,6 +2,10 @@ package org.example.DTO;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.text.ParseException;
+import java.util.ArrayList;
+
+import org.example.UtilsDate.UtilsDateFormat;
 
 public class InvoiceDTO {
     private String maHD;
@@ -10,6 +14,10 @@ public class InvoiceDTO {
     private Date ngayLap;
     private Time gioNhap;
     private double tongTien;
+    private String tenKH;
+    private String tenNV;
+
+    ArrayList<InvoiceDetailDTO> invoiceDetails;
 
     public InvoiceDTO() {
         maHD = "";
@@ -17,14 +25,20 @@ public class InvoiceDTO {
         maNV = "";
         ngayLap = null;
         tongTien = 0;
+        tenKH = "";
+        tenNV = "";
+        invoiceDetails = new ArrayList<>();
     }
 
-    public InvoiceDTO(String maHD, String maKH, String maNV, Date ngayLap, double tongTien) {
+    public InvoiceDTO(String maHD, String maKH, String maNV, Date ngayLap, Time gioNhap, double tongTien) {
         this.maHD = maHD;
         this.maKH = maKH;
         this.maNV = maNV;
         this.ngayLap = ngayLap;
+        this.gioNhap = gioNhap;
         this.tongTien = tongTien;
+        this.tenKH = "";
+        this.tenNV = "";
     }
 
     public String getMaHD() {
@@ -73,5 +87,46 @@ public class InvoiceDTO {
 
     public void setTongTien(double tongTien) {
         this.tongTien = tongTien;
+    }
+
+    public ArrayList<InvoiceDetailDTO> getInvoiceDetails(){
+        return invoiceDetails;
+    }
+
+    public void setInvoiceDetails(ArrayList<InvoiceDetailDTO> invoiceDetails){
+        this.invoiceDetails = invoiceDetails;
+    }
+
+    public String getTenKH(){
+        return tenKH;
+    }
+
+    public void setTenKH(String tenKH){
+        this.tenKH = tenKH;
+    }
+
+    public String getTenNV(){
+        return tenNV;
+    }
+
+    public void setTenNV(String tenNV){
+        this.tenNV = tenNV;
+    }
+
+    public java.util.Date getThoiGianLap(){
+        try {
+            String dateFormat = UtilsDateFormat.formatDate(ngayLap);
+            String timeFormat = UtilsDateFormat.formatTime(gioNhap);
+            java.util.Date date = UtilsDateFormat.stringToDate(dateFormat + " " + timeFormat);
+            return date;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public void setThoiGianLap(java.util.Date date){
+        this.ngayLap = new java.sql.Date(date.getTime());
+        this.gioNhap = new java.sql.Time(date.getTime());
     }
 }

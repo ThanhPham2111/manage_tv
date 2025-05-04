@@ -1,101 +1,184 @@
 package org.example.DAO;
 
 import org.example.DTO.AccountDTO;
-
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class AccountDAO {
-    private List<AccountDTO> accountList;
-
-    public AccountDAO() {
-        // Khởi tạo dữ liệu mẫu
-        accountList = new ArrayList<>();
-        accountList.add(new AccountDTO(1, "admin@example.com", "admin", "Thanh123", "NV12", "Q4"));
-        accountList.add(new AccountDTO(2, "baduoc@example.com", "BaDuocSeller", "baduoc@123", "NV3", "Q2"));
-        accountList.add(new AccountDTO(3, "nhanvien@example.com", "NhanVien", "feafe@123", "NV20", "Q2"));
-        accountList.add(new AccountDTO(4, "quanly@example.com", "Quan Ly", "quanly@123", "NV9", "Q1"));
-        accountList.add(new AccountDTO(5, "thanhtu@example.com", "ThanhTuNH", "thanhtu@434", "NV5", "Q5"));
-        accountList.add(new AccountDTO(6, "tridung@example.com", "TriDungSeller", "tridung@fe3", "NV1", "Q2"));
-        accountList.add(new AccountDTO(7, "vanhoang@example.com", "VanHoangAdmin", "vanhoang@feaf2", "NV4", "Q3"));
-        accountList.add(new AccountDTO(8, "vantai@example.com", "VanTaiNH", "vantai@1212", "NV12", "Q5"));
-        accountList.add(new AccountDTO(9, "yenhan@example.com", "YenHanPhuBH", "yenhan@123", "NV23", "Q3"));
-    }
+    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/tv";
+    private static final String JDBC_USERNAME = "root"; //Thay user nếu có khác
+    private static final String JDBC_PASSWORD = "1234"; // Thay pass
 
     public List<AccountDTO> getAllAccounts() {
+        List<AccountDTO> accountList = new ArrayList<>();
+        String sql = "SELECT * FROM users";
+        
+        try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USERNAME, JDBC_PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            
+            while (rs.next()) {
+                AccountDTO account = new AccountDTO(
+                    rs.getInt("userID"),
+                    rs.getString("userEmail"),
+                    rs.getString("userName"),
+                    rs.getString("userPassword"),
+                    rs.getString("userFullName"),
+                    rs.getInt("isAdmin") == 1 ? "Q1" : "Q2" // Q1 là quyền admin, Q2 là quyền user
+                );
+                accountList.add(account);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return accountList;
     }
 
     public boolean addAccount(AccountDTO account) {
-        return accountList.add(account);
+        String sql = "INSERT INTO users (userName, userEmail, userPassword, userFullName, isAdmin) VALUES (?, ?, ?, ?, ?)";
+        
+        try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USERNAME, JDBC_PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, account.getUsername());
+            pstmt.setString(2, account.getEmail());
+            pstmt.setString(3, account.getPassword());
+            pstmt.setString(4, account.getEmployeeId()); // Sử dụng employeeId cho userFullName
+            pstmt.setInt(5, account.getRoleId().equals("Q1") ? 1 : 0);
+            
+            int affectedRows = pstmt.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public boolean updateAccount(AccountDTO account) {
-        for (int i = 0; i < accountList.size(); i++) {
-            if (accountList.get(i).getId() == account.getId()) {
-                accountList.set(i, account);
-                return true;
-            }
+        String sql = "UPDATE users SET userName = ?, userEmail = ?, userPassword = ?, userFullName = ?, isAdmin = ? WHERE userID = ?";
+        
+        try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USERNAME, JDBC_PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, account.getUsername());
+            pstmt.setString(2, account.getEmail());
+            pstmt.setString(3, account.getPassword());
+            pstmt.setString(4, account.getEmployeeId()); // Sử dụng employeeId cho userFullName
+            pstmt.setInt(5, account.getRoleId().equals("Q1") ? 1 : 0);
+            pstmt.setInt(6, account.getId());
+            
+            int affectedRows = pstmt.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
-        return false;
     }
 
     public boolean deleteAccount(int id) {
-        return accountList.removeIf(a -> a.getId() == id);
+        String sql = "DELETE FROM users WHERE userID = ?";
+        
+        try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USERNAME, JDBC_PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, id);
+            int affectedRows = pstmt.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public List<AccountDTO> searchAccounts(String searchType, String searchText) {
         List<AccountDTO> result = new ArrayList<>();
-        searchText = searchText.toLowerCase();
-
-        for (AccountDTO account : accountList) {
-            switch (searchType) {
-                case "Email":
-                    if (account.getEmail().toLowerCase().contains(searchText)) {
-                        result.add(account);
-                    }
-                    break;
-                case "Tên tài khoản":
-                    if (account.getUsername().toLowerCase().contains(searchText)) {
-                        result.add(account);
-                    }
-                    break;
-                case "Mã nhân viên":
-                    if (account.getEmployeeId().toLowerCase().contains(searchText)) {
-                        result.add(account);
-                    }
-                    break;
-                case "Mã quyền":
-                    if (account.getRoleId().toLowerCase().contains(searchText)) {
-                        result.add(account);
-                    }
-                    break;
-                default: // "Tất cả"
-                    if (account.getEmail().toLowerCase().contains(searchText) ||
-                            account.getUsername().toLowerCase().contains(searchText) ||
-                            account.getEmployeeId().toLowerCase().contains(searchText) ||
-                            account.getRoleId().toLowerCase().contains(searchText)) {
-                        result.add(account);
-                    }
-                    break;
+        String sql = "SELECT * FROM users WHERE ";
+        
+        switch (searchType) {
+            case "Email":
+                sql += "userEmail LIKE ?";
+                break;
+            case "Tên tài khoản":
+                sql += "userName LIKE ?";
+                break;
+            case "Mã nhân viên":
+                sql += "userFullName LIKE ?";
+                break;
+            case "Mã quyền":
+                sql += "isAdmin = ?";
+                break;
+            default: // Tất cả
+                sql += "(userEmail LIKE ? OR userName LIKE ? OR userFullName LIKE ?)";
+                break;
+        }
+        
+        try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USERNAME, JDBC_PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            if (searchType.equals("Tất cả")) {
+                pstmt.setString(1, "%" + searchText + "%");
+                pstmt.setString(2, "%" + searchText + "%");
+                pstmt.setString(3, "%" + searchText + "%");
+            } else if (searchType.equals("Mã quyền")) {
+                pstmt.setInt(1, searchText.equalsIgnoreCase("Q1") ? 1 : 0);
+            } else {
+                pstmt.setString(1, "%" + searchText + "%");
             }
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    AccountDTO account = new AccountDTO(
+                        rs.getInt("userID"),
+                        rs.getString("userEmail"),
+                        rs.getString("userName"),
+                        rs.getString("userPassword"),
+                        rs.getString("userFullName"),
+                        rs.getInt("isAdmin") == 1 ? "Q1" : "Q2"
+                    );
+                    result.add(account);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return result;
     }
 
     public List<AccountDTO> filterByStatus(String status) {
         List<AccountDTO> result = new ArrayList<>();
-
-        for (AccountDTO account : accountList) {
-            if (status.equals("Tất cả")) {
-                result.add(account);
-            } else if (status.equals("Hoạt động")
-                    && !(account.getRoleId().equals("Q4") || account.getRoleId().equals("Q5"))) {
-                result.add(account);
-            } else if (status.equals("Khóa")
-                    && (account.getRoleId().equals("Q4") || account.getRoleId().equals("Q5"))) {
-                result.add(account);
+        String sql = "SELECT * FROM users";
+        
+        if (!status.equals("Tất cả")) {
+            sql += " WHERE isAdmin = ?";
+        }
+        
+        try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USERNAME, JDBC_PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            if (!status.equals("Tất cả")) {
+                pstmt.setInt(1, status.equals("Khóa") ? 1 : 0);
             }
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    AccountDTO account = new AccountDTO(
+                        rs.getInt("userID"),
+                        rs.getString("userEmail"),
+                        rs.getString("userName"),
+                        rs.getString("userPassword"),
+                        rs.getString("userFullName"),
+                        rs.getInt("isAdmin") == 1 ? "Q1" : "Q2"
+                    );
+                    result.add(account);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return result;
     }

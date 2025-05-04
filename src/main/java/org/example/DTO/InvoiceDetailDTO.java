@@ -6,11 +6,17 @@ public class InvoiceDetailDTO {
     private int soLuong;
     private float donGia;
 
+    // Thuộc tính thêm cho bên "Xem chi tiết"
+    private String tenSP;
+    private double thanhTien;
+
     public InvoiceDetailDTO() {
         this.maHD = "";
         this.maSP = "";
         this.soLuong = 0;
         this.donGia = 0;
+        this.tenSP = "";
+        this.thanhTien = 0;
     }
 
     public InvoiceDetailDTO(String maHD, String maSP, int soLuong, float donGia) {
@@ -50,5 +56,21 @@ public class InvoiceDetailDTO {
 
     public void setDonGia(float donGia) {
         this.donGia = donGia;
+    }
+
+    public String getTenSP(){
+        return tenSP;
+    }
+
+    public void setTenSP(String tenSP){
+        this.tenSP = tenSP;
+    }
+
+    public double getThanhTien(){
+        return thanhTien;
+    }
+
+    public void setThanhTien(double thanhTien){
+        this.thanhTien = thanhTien;
     }
 }

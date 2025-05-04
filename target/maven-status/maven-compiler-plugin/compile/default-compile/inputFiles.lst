@@ -4,7 +4,9 @@ C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\BUS\EmployeeBUS.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\BUS\ImportSlipBUS.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\BUS\InvoiceBUS.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\BUS\ProductBUS.java
+C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\BUS\RevenueBUS.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\BUS\SupplierBUS.java
+C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\BUS\TopProductsBUS.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\BUS\TypeProductBUS.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\BUS\UserBUS.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\ConnectDB\UtilsJDBC.java
@@ -15,7 +17,9 @@ C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DAO\ImportSlipDAO.jav
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DAO\ImportSlipDetailDAO.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DAO\InvoiceDAO.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DAO\ProductDAO.java
+C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DAO\RevenueDAO.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DAO\SupplierDAO.java
+C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DAO\TopProductsDAO.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DAO\TypeProductDAO.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DAO\UserDAO.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DTO\AccountDTO.java
@@ -26,8 +30,10 @@ C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DTO\ImportSlipDTO.jav
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DTO\InvoiceDetailDTO.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DTO\InvoiceDTO.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DTO\ProductDTO.java
+C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DTO\RevenueDTO.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DTO\SessionManager.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DTO\SupplierDTO.java
+C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DTO\TopProductsDTO.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DTO\TypeProduct.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DTO\UsersDTO.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Application\Application.java
@@ -35,6 +41,7 @@ C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Application\other
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Application\other\DefaultForm.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Application\other\FormWellcome.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Application\other\MainForm.java
+C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\CustomTable.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\FormAccount\AccountManagementForm.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\FormAuth\LoginForm.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\FormAuth\SignUpForm.java
@@ -58,6 +65,11 @@ C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\FormPr
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\FormProducts\ProductDisableButton.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\FormProducts\ProductGUI.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\FormProducts\ValidateInp.java
+C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\FormStatistic\AdminDashboardView.java
+C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\FormStatistic\Revenue\Bar.java
+C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\FormStatistic\Revenue\BarChartPanel.java
+C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\FormStatistic\Revenue\RevenueTab.java
+C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\FormStatistic\TopProductsTab\TopProductsTab.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\FormSupplier\FormNCC.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\FormSupplier\SupplierDisable.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\FormSupplier\SupplierGUI.java
