@@ -63,7 +63,7 @@ public class RevenueTab extends JPanel{
     private final ComboItem optionsViewBy[] = {
 
         new ComboItem("Trong 7 ngày", "7Days"),
-        new ComboItem("Trong 30 ngày", "30Days"),
+        new ComboItem("Trong 31 ngày", "31Days"),
         new ComboItem("Năm", "Years"),
         new ComboItem("Tháng", "Months"),
         new ComboItem("Ngày", "Days"),
@@ -84,8 +84,6 @@ public class RevenueTab extends JPanel{
         new ComboItem("12", "12")
     };
     private final ComboItem optionsYear[] = {
-        new ComboItem("2023", "2023"),
-        new ComboItem("2024", "2024"),
         new ComboItem("2025", "2025")
     };
 
@@ -113,6 +111,7 @@ public class RevenueTab extends JPanel{
         toDatePicker = new FormattedDatePicker(null);
         applyFilterBtn = new JButton("Lọc");
         applyFilterBtn.setPreferredSize(new Dimension(BUTTON_WIDTH, applyFilterBtn.getPreferredSize().height));
+        applyFilterBtn.setFocusPainted(false);
 
         ((JLabel)cbxViewBy.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
         ((JLabel)cbxMonth.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
@@ -213,7 +212,6 @@ public class RevenueTab extends JPanel{
         if(revenues.size() == 0){
             noDataLabel.setVisible(true);
             spRevenueTable.setVisible(false);
-            lblTitle.setText("");
             return;
         }
 
@@ -254,7 +252,7 @@ public class RevenueTab extends JPanel{
                 yearPanel.setVisible(false);
                 customDatePanel.setVisible(false);
             } else
-            if("30Days".equalsIgnoreCase(selectedViewBy)){
+            if("31Days".equalsIgnoreCase(selectedViewBy)){
                 monthPanel.setVisible(false);
                 yearPanel.setVisible(false);
                 customDatePanel.setVisible(false);
@@ -302,8 +300,8 @@ public class RevenueTab extends JPanel{
             if("7Days".equalsIgnoreCase(selectedViewBy)){
                 lblTitle.setText("Doanh thu trong 7 ngày");
             } else
-            if("30Days".equalsIgnoreCase(selectedViewBy)){
-                lblTitle.setText("Doanh thu trong 30 ngày");
+            if("31Days".equalsIgnoreCase(selectedViewBy)){
+                lblTitle.setText("Doanh thu trong 31 ngày");
             } else
             if("Years".equalsIgnoreCase(selectedViewBy)){
                 lblTitle.setText("Doanh thu các năm");
@@ -320,27 +318,35 @@ public class RevenueTab extends JPanel{
                 lblTitle.setText(String.format("Doanh thu các ngày trong %02d/%d", currentMonth, currentYear));
             }
 
-            ArrayList<RevenueDTO> revenues;
+            ArrayList<RevenueDTO> revenues = new ArrayList<>();
             if("7Days".equalsIgnoreCase(selectedViewBy)){
                 Date fromDate, toDate;
                 Date refDates[] = new Date[3];
-                revenueBUS.setFromDateToDate(refDates, 7);
+                revenueBUS.setFromDateToDateToLastDays(refDates, 7);
                 fromDate = refDates[0];
                 toDate = refDates[1];
 
                 revenues = revenueBUS.getRevenuesByDate(fromDate, toDate);
-                lblTitle.setText("Doanh thu trong 7 ngày");
             } else
-            if("30Days".equalsIgnoreCase(selectedViewBy)){
+            if("31Days".equalsIgnoreCase(selectedViewBy)){
                 Date fromDate, toDate;
                 Date refDates[] = new Date[3];
-                revenueBUS.setFromDateToDate(refDates, 30);
+                revenueBUS.setFromDateToDateToLastDays(refDates, 31);
                 fromDate = refDates[0];
                 toDate = refDates[1];
                 
                 revenues = revenueBUS.getRevenuesByDate(fromDate, toDate);
-                lblTitle.setText("Doanh thu trong 30 ngày");
-            } else{
+            } else
+            if("Custom".equalsIgnoreCase(selectedViewBy)){
+                Date fromDate = fromDatePicker.getDate();
+                Date toDate = toDatePicker.getDate();
+                if(fromDate != null && toDate != null){
+                    revenues = revenueBUS.getRevenuesByDate(fromDate, toDate);
+                    lblTitle.setText(String.format("Doanh thu từ %s đến %s",
+                                UtilsDateFormat.formatDate(fromDate),
+                                UtilsDateFormat.formatDate(toDate)));
+                } else lblTitle.setText("");
+            } else {
                 revenues = revenueBUS.getRevenues(selectedViewBy, currentMonth, currentYear);
             }
             

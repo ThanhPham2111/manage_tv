@@ -39,10 +39,11 @@ public class RevenueBUS {
         return 0;
     }
 
-    public void setFromDateToDate(Date[] refDates, int days){
+    public void setFromDateToDateToLastDays(Date[] refDates, int days){
         Date today = new Date();
-        days--;
-        refDates[0] = UtilsDateCustom.addDays(today, -days);
+        days = days - 1;
+        days = Math.max(days, 0);
+        refDates[0] = UtilsDateCustom.addDays(today, 0 - days);
         refDates[1] = today;
     }
 }

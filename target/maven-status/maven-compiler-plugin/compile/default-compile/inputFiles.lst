@@ -1,7 +1,7 @@
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\BUS\AccountBUS.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\BUS\CustomerBUS.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\BUS\EmployeeBUS.java
-C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\BUS\ImportSlipBUS.java
+C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\BUS\ImportBUS.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\BUS\InvoiceBUS.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\BUS\ProductBUS.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\BUS\RevenueBUS.java
@@ -13,8 +13,8 @@ C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\ConnectDB\UtilsJDBC.j
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DAO\AccountDAO.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DAO\CustomerDAO.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DAO\EmployeeDAO.java
-C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DAO\ImportSlipDAO.java
-C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DAO\ImportSlipDetailDAO.java
+C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DAO\ImportDAO.java
+C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DAO\ImportDetailDAO.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DAO\InvoiceDAO.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DAO\ProductDAO.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DAO\RevenueDAO.java
@@ -25,8 +25,8 @@ C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DAO\UserDAO.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DTO\AccountDTO.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DTO\CustomerDTO.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DTO\EmployeeDTO.java
-C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DTO\ImportSlipDetailDTO.java
-C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DTO\ImportSlipDTO.java
+C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DTO\ImportDetailDTO.java
+C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DTO\ImportDTO.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DTO\InvoiceDetailDTO.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DTO\InvoiceDTO.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DTO\ProductDTO.java
@@ -39,14 +39,12 @@ C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\DTO\UsersDTO.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Application\Application.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Application\other\BeginForm.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Application\other\DefaultForm.java
-C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Application\other\FormWellcome.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Application\other\MainForm.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\CustomTable.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\FormAccount\AccountManagementForm.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\FormAuth\LoginForm.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\FormAuth\SignUpForm.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\FormBanHang\FormChooseCustomer.java
-C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\FormBanHang\FormSell.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\FormBanHang\FormSellDisable.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\FormCustomer\AddButtonCustomer.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\FormCustomer\CustomerDisable.java
@@ -59,6 +57,8 @@ C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\FormHo
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\FormHoaDon\InvoiceExportDialog.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\FormHoaDon\InvoiceView.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\FormHoaDon\Utils\UtilsJTableStyle.java
+C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\FormNhapHang\FormChooseSupplier.java
+C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\FormNhapHang\FormNhapHang.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\FormPhieuNhap\PhieuNhapGUI.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\FormProducts\IconCellRenderer.java
 C:\Users\T480s\Desktop\manage_tv\src\main\java\org\example\GUI\Components\FormProducts\ImageRender.java

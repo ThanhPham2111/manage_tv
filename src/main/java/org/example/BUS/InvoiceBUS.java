@@ -67,7 +67,8 @@ public class InvoiceBUS {
         return invoiceDAO.getFilteredInvoices(maHoaDon, maKhachHang, maNhanVien, fromDate, toDate);
     }
 
-    public String validateFilter(String maHoaDon,
+    public String validateFilter(String dateOption,
+                          String maHoaDon,
                           String maKhachHang,
                           String maNhanVien,
                           Date fromDate,
@@ -84,9 +85,11 @@ public class InvoiceBUS {
         if(!isValidCustomerID(maKhachHang)) invalidMessages.add(invalidCustomerIDMessage);
         if(!isValidEmployeeID(maNhanVien)) invalidMessages.add(invalidEmployeeIDMessage);
         
-        short statusIsValidCustomDate = isValidCustomDate(fromDate, toDate);
-        if(statusIsValidCustomDate == 1) invalidMessages.add(EmptyCustomDate); else
-        if(statusIsValidCustomDate == 2) invalidMessages.add(invalidCustomDate);
+        if("Custom".equalsIgnoreCase(dateOption)){
+            short statusIsValidCustomDate = isValidCustomDate(fromDate, toDate);
+            if(statusIsValidCustomDate == 1) invalidMessages.add(EmptyCustomDate); else
+            if(statusIsValidCustomDate == 2) invalidMessages.add(invalidCustomDate);
+        }
 
         return String.join("\n\n", invalidMessages);
     }
@@ -155,6 +158,14 @@ public class InvoiceBUS {
         Date today = new Date();
         
         switch (dateOption) {
+            case "7Days":
+                refDates[0] = UtilsDateCustom.addDays(today, -6);
+                refDates[1] = today;
+                break;
+            case "31Days":
+                refDates[0] = UtilsDateCustom.addDays(today, -30);
+                refDates[1] = today;
+                break;
             case "Today":
                 refDates[0] = refDates[1] = today;
                 break;

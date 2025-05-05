@@ -9,6 +9,7 @@ import org.example.GUI.Components.FormProducts.ValidateInp;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.text.DecimalFormat; // Thêm import này
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -219,8 +220,8 @@ public class ProductDialog {
         JTextField txtTenSP = new JTextField(tenSP);
 
         JLabel lblDonGia = new JLabel("Đơn giá:");
-        JTextField txtDonGia = new JTextField(String.valueOf(donGia));
-        txtDonGia.setEnabled(false);
+        DecimalFormat formatter = new DecimalFormat("#,##0"); // Định dạng số với dấu phẩy
+        JTextField txtDonGia = new JTextField(formatter.format(donGia)); // Sử dụng DecimalFormat để hiển thị giá
 
         JLabel lblFileAnh = new JLabel("File ảnh:");
         JButton btnChooseImage = new JButton(fileAnh);
@@ -283,7 +284,7 @@ public class ProductDialog {
                 String newTenSP = txtTenSP.getText();
                 String newFileAnh = btnChooseImage.getText();
                 String newTrangThai = convertTrangThai(cboTrangThai.getSelectedItem().toString());
-                String donGiaStr = txtDonGia.getText();
+                String donGiaStr = txtDonGia.getText().replace(",", ""); // Loại bỏ dấu phẩy trước khi parse
                 String soLuongStr = txtSoLuong.getText();
 
                 if (!ValidateInp.isNotEmpty(maSP) || !ValidateInp.isNotEmpty(newMaLSP)

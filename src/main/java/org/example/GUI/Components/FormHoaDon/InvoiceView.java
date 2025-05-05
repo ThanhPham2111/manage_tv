@@ -66,7 +66,7 @@ public class InvoiceView extends JPanel {
 
     private JPanel filterPanel;
     private JTextField txtInvoiceID, txtCustomerID, txtEmployeeID;
-    private JComboBox<ComboItem> dateChooserCb;
+    private JComboBox<ComboItem> cbxDateCb;
     private FormattedDatePicker fromDatePicker, toDatePicker;
     private JPanel customDateContainer, buttonContainer;
     private JButton applyFilterBtn, resetFilterBtn;
@@ -132,6 +132,9 @@ public class InvoiceView extends JPanel {
         bottomContainer = new JPanel(new FlowLayout(FlowLayout.TRAILING));
         exportExcelBtn = new JButton("Xuất Excel");
         exportExcelBtn.setPreferredSize(new Dimension(BUTTON_WIDTH, invoiceDetailBtn.getPreferredSize().height));
+        exportExcelBtn.setBackground(new Color(40, 167, 69));
+        exportExcelBtn.setForeground(Color.WHITE);
+        exportExcelBtn.setFocusPainted(false);
         bottomContainer.add(exportExcelBtn);
     }
 
@@ -160,6 +163,7 @@ public class InvoiceView extends JPanel {
 
 
         invoiceDetailBtn = new JButton("Xem chi tiết");
+        invoiceDetailBtn.setFocusPainted(false);
         invoiceDetailBtn.setPreferredSize(new Dimension(BUTTON_WIDTH, invoiceDetailBtn.getPreferredSize().height));
 
         infoPanel.add(createRow(createLabel("Mã hoá đơn: ", LABEL_PREFERRED_WIDTH,
@@ -195,15 +199,17 @@ public class InvoiceView extends JPanel {
             new ComboItem("Tất cả", "All"),
             new ComboItem("Hôm nay", "Today"),
             new ComboItem("Hôm qua", "Yesterday"),
+            new ComboItem("Trong 7 ngày", "7Days"),
+            new ComboItem("Trong 31 ngày", "31Days"),
             new ComboItem("Tuần này", "ThisWeek"),
             new ComboItem("Tháng này", "ThisMonth"),
             new ComboItem("Năm nay", "ThisYear"),
             new ComboItem("Tuỳ chọn", "Custom")
         };
 
-        dateChooserCb = new JComboBox<>(dateItems);
+        cbxDateCb = new JComboBox<>(dateItems);
         
-        dateChooserCb.setPreferredSize(txtCustomerID.getPreferredSize());
+        cbxDateCb.setPreferredSize(txtCustomerID.getPreferredSize());
 
         Date today = new Date();
         fromDatePicker = new FormattedDatePicker(today);
@@ -219,8 +225,10 @@ public class InvoiceView extends JPanel {
 
         applyFilterBtn = new JButton("Tìm kiếm ");
         applyFilterBtn.setPreferredSize(new Dimension(BUTTON_WIDTH, invoiceDetailBtn.getPreferredSize().height));
+        applyFilterBtn.setFocusPainted(false);
         resetFilterBtn = new JButton("Xoá bộ lọc");
         resetFilterBtn.setPreferredSize(new Dimension(BUTTON_WIDTH - 35, invoiceDetailBtn.getPreferredSize().height));
+        resetFilterBtn.setFocusPainted(false);
 
         buttonContainer.add(applyFilterBtn);
         buttonContainer.add(resetFilterBtn);
@@ -234,9 +242,9 @@ public class InvoiceView extends JPanel {
         filterPanel.add(createRow(createLabel("Mã nhân viên: ", LABEL_PREFERRED_WIDTH,
                                   FONT_LABEL),
                                   txtEmployeeID, FlowLayout.LEADING));
-        filterPanel.add(createRow(createLabel("Chọn ngày: ", LABEL_PREFERRED_WIDTH,
+        filterPanel.add(createRow(createLabel("Chọn thời gian: ", LABEL_PREFERRED_WIDTH,
                                   FONT_LABEL),
-                                  dateChooserCb, FlowLayout.LEADING));
+                                  cbxDateCb, FlowLayout.LEADING));
         filterPanel.add(customDateContainer);
         filterPanel.add(buttonContainer);
     }
@@ -258,8 +266,8 @@ public class InvoiceView extends JPanel {
 
         });
         
-        dateChooserCb.addActionListener((e) -> {
-            ComboItem selectedItem = (ComboItem) (dateChooserCb.getSelectedItem());
+        cbxDateCb.addActionListener((e) -> {
+            ComboItem selectedItem = (ComboItem) (cbxDateCb.getSelectedItem());
             String logicValue = selectedItem.getLogicValue();
 
             if ("Custom".equals(logicValue)) {
@@ -312,9 +320,9 @@ public class InvoiceView extends JPanel {
         String maHoaDon = txtInvoiceID.getText().trim().toUpperCase();
         String maKhachHang = txtCustomerID.getText().trim().toUpperCase();
         String maNhanVien = txtEmployeeID.getText().trim().toUpperCase();
-        ComboItem selectedItem = (ComboItem) dateChooserCb.getSelectedItem();
+        ComboItem selectedItem = (ComboItem) cbxDateCb.getSelectedItem();
         String dateOption = selectedItem.getLogicValue();
-        Date fromDate, toDate;
+        Date fromDate = null, toDate = null;
         Date customFromDate, customToDate;
 
         Date[] refDates = new Date[3];
@@ -328,7 +336,7 @@ public class InvoiceView extends JPanel {
         fromDate = refDates[0];
         toDate = refDates[1];
 
-        String invalidMessages = invoiceBUS.validateFilter(maHoaDon, maKhachHang, maNhanVien, fromDate, toDate);
+        String invalidMessages = invoiceBUS.validateFilter(dateOption, maHoaDon, maKhachHang, maNhanVien, fromDate, toDate);
 
         if(!invalidMessages.isEmpty()){
             showInvalidMessages("Sai định dạng", invalidMessages);
@@ -351,7 +359,7 @@ public class InvoiceView extends JPanel {
         txtInvoiceID.setText("");
         txtCustomerID.setText("");
         txtEmployeeID.setText("");
-        dateChooserCb.setSelectedIndex(0);
+        cbxDateCb.setSelectedIndex(0);
         customDateContainer.setVisible(false);
 
         Date today = new Date();

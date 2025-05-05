@@ -23,11 +23,11 @@ public class TopProductsBUS {
         return 0;
     }
     
-    public void setFromDateToDate(Date refDates[], int days){
+    public void setFromDateToDateToLastDays(Date refDates[], int days){
         Date today = new Date();
-        days--;
+        days = days - 1;
         days = Math.max(days, 0);
-        refDates[0] = UtilsDateCustom.addDays(today, -days);
+        refDates[0] = UtilsDateCustom.addDays(today, 0 - days);
         refDates[1] = today;
     }
 
@@ -42,7 +42,7 @@ public class TopProductsBUS {
         if("7Days".equalsIgnoreCase(selectedViewBy)){
             topProducts = topProductsDAO.getTopProductsByDate(fromDate, toDate, selectedLimit);
         } else
-        if("30Days".equalsIgnoreCase(selectedViewBy)){
+        if("31Days".equalsIgnoreCase(selectedViewBy)){
             topProducts = topProductsDAO.getTopProductsByDate(fromDate, toDate, selectedLimit);
         }
 

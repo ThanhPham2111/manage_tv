@@ -1,4 +1,3 @@
-
 package org.example.GUI.Components.FormBanHang;
 
 import java.awt.*;
@@ -85,7 +84,6 @@ public class FormSellDisable extends JPanel {
         panel10 = new JPanel();
         panel11 = new JPanel();
         btnXoa = new JButton();
-        btnSua = new JButton();
         btnReset2 = new JButton();
         btnChoose = new JButton();
         textField2 = new JTextField();
@@ -93,7 +91,6 @@ public class FormSellDisable extends JPanel {
         tableSell2 = new JTable();
         panel12 = new JPanel();
         panel13 = new JPanel();
-        btnHuy = new JButton();
         btnTong = new JButton();
         comboBox = new JComboBox();
 
@@ -319,10 +316,6 @@ public class FormSellDisable extends JPanel {
             }
         });
         panel11.add(btnXoa);
-        btnSua.setText("Sửa");
-        btnSua.setIcon(
-                new ImageIcon(getClass().getResource("/org/example/GUI/resources/images/icons8_support_30px.png")));
-        panel11.add(btnSua);
         btnReset2.setText("Làm mới");
         btnReset2.setIcon(
                 new ImageIcon(getClass().getResource("/org/example/GUI/resources/images/icons8_data_backup_30px.png")));
@@ -351,10 +344,6 @@ public class FormSellDisable extends JPanel {
         panel8.add(panel12, BorderLayout.WEST);
 
         panel13.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        btnHuy.setText("Hủy");
-        btnHuy.setIcon(
-                new ImageIcon(getClass().getResource("/org/example/GUI/resources/images/icons8_cancel_30px_1.png")));
-        panel13.add(btnHuy);
         btnTong.setText("Thanh toán");
         btnTong.setIcon(
                 new ImageIcon(getClass().getResource("/org/example/GUI/resources/images/icons8_us_dollar_30px.png")));
@@ -450,10 +439,6 @@ public class FormSellDisable extends JPanel {
         invoice.setInvoiceDetails(dscthd);
 
         try {
-            // if (!invoiceBUS.addInvoice(invoice)) {
-            //     throw new SQLException("Không thể thêm hóa đơn");
-            // }
-
             invoiceBUS.addInvoice(invoice);
 
             dscthd.clear();
@@ -646,7 +631,7 @@ public class FormSellDisable extends JPanel {
     private JPanel panel1, panel4, panel2, panel5, panel6, panel7, panel8, panel9, panel10, panel11, panel12, panel13;
     private JTextField txtSearch, txtMaSP, txtLoaiSP, txtTenSP, txtDonGia, txtSoLuong, txtMaHD, textField10,
             txtTongTien, txtKhachHang, txtNhanVien, txtNgayLap, txtGioLap, textField2;
-    private JButton btnReset, btnAdd, btnXoa, btnSua, btnReset2, btnChoose, btnHuy, btnTong;
+    private JButton btnReset, btnAdd, btnXoa, btnReset2, btnChoose, btnTong;
     private JScrollPane scrollPane2, scrollPane1;
     private JTable tableSell, tableSell2;
     private JLabel image;

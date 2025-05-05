@@ -52,7 +52,7 @@ public class TopProductsTab extends JPanel {
     private final ComboItem optionsViewBy[] = {
 
         new ComboItem("Trong 7 ngày", "7Days"),
-        new ComboItem("Trong 30 ngày", "30Days"),
+        new ComboItem("Trong 31 ngày", "31Days"),
         new ComboItem("Năm", "Years"),
         new ComboItem("Tháng", "Months"),
         new ComboItem("Tuỳ chọn", "Custom")
@@ -72,8 +72,6 @@ public class TopProductsTab extends JPanel {
         new ComboItem("12", "12")
     };
     private final ComboItem optionsYear[] = {
-        new ComboItem("2023", "2023"),
-        new ComboItem("2024", "2024"),
         new ComboItem("2025", "2025")
     };
 
@@ -121,6 +119,7 @@ public class TopProductsTab extends JPanel {
         toDatePicker = new FormattedDatePicker(null);
         applyFilterBtn = new JButton("Lọc");
         applyFilterBtn.setPreferredSize(new Dimension(BUTTON_WIDTH, applyFilterBtn.getPreferredSize().height));
+        applyFilterBtn.setFocusPainted(false);
 
         ((JLabel)cbxViewBy.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
         ((JLabel)cbxMonth.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
@@ -218,7 +217,7 @@ public class TopProductsTab extends JPanel {
                 yearPanel.setVisible(false);
                 customDatePanel.setVisible(false);
             } else
-            if("30Days".equalsIgnoreCase(selectedViewBy)){
+            if("31Days".equalsIgnoreCase(selectedViewBy)){
                 monthPanel.setVisible(false);
                 yearPanel.setVisible(false);
                 customDatePanel.setVisible(false);
@@ -331,20 +330,20 @@ public class TopProductsTab extends JPanel {
         Date fromDate = null, toDate = null;
         Date refDates[] = new Date[3];
         
-        
+        ArrayList<TopProductsDTO> topProducts = new ArrayList<>();
         if("7Days".equalsIgnoreCase(selectedViewBy)){
-            topProductsBUS.setFromDateToDate(refDates, 7);
+            topProductsBUS.setFromDateToDateToLastDays(refDates, 7);
             fromDate = refDates[0];
             toDate = refDates[1];
 
             lblTitle.setText("Top " + limit + " sản phẩm trong vòng 7 ngày");
         } else
-        if("30Days".equalsIgnoreCase(selectedViewBy)){
-            topProductsBUS.setFromDateToDate(refDates, 30);
+        if("31Days".equalsIgnoreCase(selectedViewBy)){
+            topProductsBUS.setFromDateToDateToLastDays(refDates, 31);
             fromDate = refDates[0];
             toDate = refDates[1];
             
-            lblTitle.setText("Top " + limit + " sản phẩm trong vòng 30 ngày");
+            lblTitle.setText("Top " + limit + " sản phẩm trong vòng 31 ngày");
         } else
         if("Years".equalsIgnoreCase(selectedViewBy)){
             selectedYear = Integer.parseInt(((ComboItem) cbxYear.getSelectedItem()).getLogicValue());
@@ -356,9 +355,24 @@ public class TopProductsTab extends JPanel {
             selectedYear = Integer.parseInt(((ComboItem) cbxYear.getSelectedItem()).getLogicValue());
 
             lblTitle.setText(String.format("Top %d sản phẩm trong %02d/%d", limit, selectedMonth, selectedYear));
+        } else
+        if("Custom".equalsIgnoreCase(selectedViewBy)){
+            fromDate = fromDatePicker.getDate();
+            toDate = toDatePicker.getDate();
+            if(fromDate != null && toDate != null){
+                lblTitle.setText(String.format("Top %d sản phẩm từ %s đến %s",
+                            limit,
+                            UtilsDateFormat.formatDate(fromDate),
+                            UtilsDateFormat.formatDate(toDate)));
+            } else lblTitle.setText("");
         }
-
-        ArrayList<TopProductsDTO> topProducts = topProductsBUS.getTopProducts(selectedViewBy, selectedMonth, selectedYear, fromDate, toDate, limit);
+        if("Custom".equalsIgnoreCase(selectedViewBy)){
+            if(fromDate != null && toDate != null){
+                topProducts = topProductsBUS.getTopProductsByDate(fromDate, toDate, limit);
+            }
+        } else{
+            topProducts = topProductsBUS.getTopProducts(selectedViewBy, selectedMonth, selectedYear, fromDate, toDate, limit);
+        }
         loadTopProducts(topProducts);
     }
 
@@ -414,7 +428,6 @@ public class TopProductsTab extends JPanel {
         if(topProducts.size() == 0){
             noDataLabel.setVisible(true);
             spTable.setVisible(false);
-            lblTitle.setText("");
             return;
         }
 
