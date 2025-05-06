@@ -284,9 +284,9 @@ public class AccountManagementForm extends JPanel {
 
         // =============== Filter and search =============
         JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        filterPanel.add(new JLabel("Trạng thái tài khoản:"));
+        filterPanel.add(new JLabel("Quyền tài khoản:"));
 
-        statusComboBox = new JComboBox<>(new String[] { "Tất cả", "Hoạt động", "Khóa" });
+        statusComboBox = new JComboBox<>(new String[] { "Tất cả", "Admin", "Thường" });
         filterPanel.add(statusComboBox);
 
         filterPanel.add(Box.createHorizontalStrut(10));

@@ -1,5 +1,7 @@
 package org.example.GUI.Application.other;
 
+import org.example.GUI.Components.FormPhieuNhap.PhieuNhapGUI;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.ComponentOrientation;
@@ -21,6 +23,7 @@ import org.example.GUI.Components.FormCustomer.CustomerGUI;
 import org.example.GUI.Components.FormEmployee.EmployeeGUI;
 import org.example.GUI.Components.FormHoaDon.InvoiceView;
 import org.example.GUI.Components.FormNhapHang.FormNhapHang;
+import org.example.GUI.Components.FormPhieuNhap.PhieuNhapGUI;
 import org.example.GUI.Components.FormProducts.ProductGUI;
 import org.example.GUI.Components.FormStatistic.AdminDashboardView;
 import org.example.GUI.Components.FormSupplier.SupplierGUI;
@@ -87,6 +90,7 @@ public class MainForm extends JLayeredPane {
             } else if (index == 3) {
                 Application.showForm(new InvoiceView());
             } else if (index == 4) {
+                Application.showForm(new PhieuNhapGUI());
                 // phieunhapGUI
             } else if (index == 5) {
                 Application.showForm(new EmployeeGUI());

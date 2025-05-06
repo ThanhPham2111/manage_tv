@@ -40,14 +40,13 @@ public class AccountBUS {
     public List<AccountDTO> applyFilters(String status, String searchType, String searchText) {
         List<AccountDTO> accounts = accountDAO.getAllAccounts();
         List<AccountDTO> result = new ArrayList<>();
-
+    
         for (AccountDTO account : accounts) {
+            // Sửa logic lọc quyền tài khoản
             boolean statusMatch = status.equals("Tất cả") ||
-                    (status.equals("Hoạt động")
-                            && !(account.getRoleId().equals("Q4") || account.getRoleId().equals("Q5")))
-                    ||
-                    (status.equals("Khóa") && (account.getRoleId().equals("Q4") || account.getRoleId().equals("Q5")));
-
+                    (status.equals("Admin") && account.getRoleId().equals("Q1")) ||
+                    (status.equals("Thường") && account.getRoleId().equals("Q2"));
+    
             boolean searchMatch = searchText.isEmpty();
             if (!searchMatch) {
                 switch (searchType) {
@@ -71,7 +70,7 @@ public class AccountBUS {
                         break;
                 }
             }
-
+    
             if (statusMatch && searchMatch) {
                 result.add(account);
             }

@@ -92,8 +92,10 @@ public class PhieuNhapGUI extends JPanel {
         JPanel pnButton = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         btnXuatExcel = new JButton("Xuất Excel");
         btnXemChiTiet = new JButton("Xem chi tiết");
+        btnChonNCC = new JButton("Chọn nhà cung cấp");  // Thêm khởi tạo nút này
         pnButton.add(btnXuatExcel);
         pnButton.add(btnXemChiTiet);
+        pnButton.add(btnChonNCC);  // Thêm nút vào panel
 
         JPanel pnFilter = new JPanel(new GridLayout(3, 1));
         pnFilter.add(pnSearch);
@@ -107,6 +109,14 @@ public class PhieuNhapGUI extends JPanel {
 
         pnTop.setBorder(new TitledBorder("Tìm kiếm"));
         pnContent.setBorder(new TitledBorder("Danh sách phiếu nhập"));
+
+        // Khởi tạo các JTextField
+        txtMaPhieuNhap = new JTextField(20);
+        txtNhaCungCap = new JTextField(20);
+        txtNhanVien = new JTextField(20);
+        txtNgayLap = new JTextField(20);
+        txtGioLap = new JTextField(20);
+        txtTongTien = new JTextField(20);
 
         add(pnTop, BorderLayout.NORTH);
         add(pnContent, BorderLayout.CENTER);

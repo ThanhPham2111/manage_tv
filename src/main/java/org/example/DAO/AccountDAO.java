@@ -28,8 +28,8 @@ public class AccountDAO {
                     rs.getString("userEmail"),
                     rs.getString("userName"),
                     rs.getString("userPassword"),
-                    rs.getString("userFullName"),
-                    rs.getInt("isAdmin") == 1 ? "Q1" : "Q2" // Q1 là quyền admin, Q2 là quyền user
+                    rs.getString("maNV"), // Sửa từ userFullName sang maNV
+                    rs.getInt("isAdmin") == 1 ? "Q1" : "Q2" // Q1 là admin, Q2 là user thường
                 );
                 accountList.add(account);
             }
