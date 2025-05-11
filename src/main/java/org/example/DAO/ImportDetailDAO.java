@@ -23,7 +23,7 @@ public class ImportDetailDAO {
             pst = conn.prepareStatement(sql);
             pst.setString(1, maPhieuNhap);
             rs = pst.executeQuery();
-            
+
             while (rs.next()) {
                 ImportDetailDTO detail = new ImportDetailDTO();
                 detail.setMaPN(rs.getString("MaPN"));
@@ -51,7 +51,7 @@ public class ImportDetailDAO {
             pst.setInt(3, detail.getSoLuong());
             pst.setFloat(4, detail.getDonGia());
             pst.setFloat(5, detail.getThanhTien());
-            
+
             return pst.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -71,7 +71,7 @@ public class ImportDetailDAO {
             pst.setFloat(3, detail.getThanhTien());
             pst.setString(4, detail.getMaPN());
             pst.setString(5, detail.getMaSP());
-            
+
             return pst.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -88,7 +88,7 @@ public class ImportDetailDAO {
             pst = conn.prepareStatement(sql);
             pst.setString(1, maPhieuNhap);
             pst.setString(2, maSP);
-            
+
             return pst.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -104,7 +104,7 @@ public class ImportDetailDAO {
             conn = UtilsJDBC.getConnectDB();
             pst = conn.prepareStatement(sql);
             pst.setString(1, maPhieuNhap);
-            
+
             return pst.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -113,4 +113,22 @@ public class ImportDetailDAO {
             UtilsJDBC.closeConnection();
         }
     }
-} 
+
+    public boolean addImportDetail(ImportDetailDTO detail) {
+        String query = "INSERT INTO import_detail (MaPN, MaSP, SoLuong, DonGia) VALUES (?, ?, ?, ?)";
+        try {
+            conn = UtilsJDBC.getConnectDB();
+            pst = conn.prepareStatement(query);
+            pst.setString(1, detail.getMaPN());
+            pst.setString(2, detail.getMaSP());
+            pst.setInt(3, detail.getSoLuong());
+            pst.setFloat(4, detail.getDonGia());
+            return pst.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            UtilsJDBC.closeConnection();
+        }
+    }
+}

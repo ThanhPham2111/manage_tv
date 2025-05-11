@@ -356,7 +356,7 @@ public class FormSellDisable extends JPanel {
         btnReset.addActionListener(e -> {
             txtSearch.setText("");
             comboBox.setSelectedItem("Tất cả");
-            setDataTable(productBUS.getList());
+            setDataTable(productBUS.getListFromTonKho());
         });
 
         txtSearch.getDocument().addDocumentListener(new DocumentListener() {
@@ -379,7 +379,7 @@ public class FormSellDisable extends JPanel {
                 String value = txtSearch.getText();
                 ArrayList<ProductDTO> result = new ArrayList<>();
                 String selectedField = (String) comboBox.getSelectedItem();
-                for (ProductDTO product : productBUS.getList()) {
+                for (ProductDTO product : productBUS.getListFromTonKho()) {
                     if (selectedField.equals("Tất cả") || productBUS.isMatched(product, selectedField, value)) {
                         result.add(product);
                     }
@@ -474,8 +474,7 @@ public class FormSellDisable extends JPanel {
     }
 
     public void refresh() {
-        productBUS.listSP();
-        setDataTable(productBUS.getList());
+        setDataTable(productBUS.getListFromTonKho());
     }
 
     public void addDetails(String maSP, int soLuong) {

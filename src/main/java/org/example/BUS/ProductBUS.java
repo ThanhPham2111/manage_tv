@@ -2,15 +2,27 @@ package org.example.BUS;
 
 import org.example.DAO.ProductDAO;
 import org.example.DTO.ProductDTO;
+import org.example.ConnectDB.UtilsJDBC;
 
 import java.text.Normalizer;
 import java.util.ArrayList;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 public class ProductBUS {
     private ArrayList<ProductDTO> listSp;
     private ProductDAO productDao = new ProductDAO();
+    private Connection conn;
+    private PreparedStatement ps;
+    private ResultSet rs;
 
     public ProductBUS() {
+        try {
+            conn = UtilsJDBC.getConnectDB();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         listSP(); // Khởi tạo danh sách sản phẩm ngay khi tạo đối tượng
     }
 
@@ -160,5 +172,43 @@ public class ProductBUS {
         }
         // Kiểm tra getNextID
         System.out.println("Next ID: " + manager.getNextID());
+    }
+
+    public ArrayList<ProductDTO> getListFromTonKho() {
+        ArrayList<ProductDTO> list = new ArrayList<>();
+        String query = "SELECT * FROM tonkho";
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = UtilsJDBC.getConnectDB();
+            ps = conn.prepareStatement(query);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                ProductDTO product = new ProductDTO(
+                        rs.getString("MaSP"),
+                        rs.getString("MaLSP"),
+                        rs.getString("TenSP"),
+                        rs.getFloat("DonGia"),
+                        rs.getInt("SoLuong"),
+                        rs.getString("HinhAnh"),
+                        rs.getInt("Trangthai"));
+                list.add(product);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null)
+                    rs.close();
+                if (ps != null)
+                    ps.close();
+                if (conn != null)
+                    UtilsJDBC.closeConnection();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return list;
     }
 }

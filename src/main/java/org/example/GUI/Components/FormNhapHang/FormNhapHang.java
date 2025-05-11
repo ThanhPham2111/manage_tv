@@ -1,9 +1,12 @@
 package org.example.GUI.Components.FormNhapHang;
 
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
+import java.sql.*;
+import com.mysql.cj.exceptions.ConnectionIsClosedException;
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -14,30 +17,39 @@ import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
-import org.example.BUS.ProductBUS;
-import org.example.BUS.TypeProductBUS;
-import org.example.BUS.EmployeeBUS;
+import javax.swing.table.TableColumnModel;
+
 import org.example.BUS.ImportBUS;
+import org.example.BUS.InventoryBUS;
+import org.example.BUS.ProductBUS;
+import org.example.BUS.EmployeeBUS;
+import org.example.BUS.SupplierBUS;
+import org.example.BUS.TypeProductBUS;
+import org.example.ConnectDB.UtilsJDBC;
+import org.example.DTO.CustomerDTO;
+import org.example.DTO.ImportDTO;
 import org.example.DTO.ImportDetailDTO;
 import org.example.DTO.ProductDTO;
-import org.example.DTO.SupplierDTO;
 import org.example.DTO.EmployeeDTO;
 import org.example.DTO.SessionManager;
 import org.example.DTO.TypeProduct;
 import org.example.DTO.UsersDTO;
+import org.example.DTO.InventoryDTO;
+import org.example.DTO.SupplierDTO;
 
 public class FormNhapHang extends JPanel {
     private final DecimalFormat priceFormatter = new DecimalFormat("#,##0");
+    private ArrayList<ProductDTO> allProducts;
     private ProductBUS productBUS;
     private TypeProductBUS typeProductBUS;
-    private EmployeeBUS employeeBUS;
     private ImportBUS importBUS;
-    private ArrayList<ProductDTO> allProducts;
-    private ArrayList<ImportDetailDTO> dsctpn;
+    private EmployeeBUS employeeBUS;
+    private SupplierBUS supplierBUS;
+    private InventoryBUS inventoryBUS;
 
     private JPanel panel1, panel4, panel2, panel5, panel6, panel7, panel8, panel9, panel10, panel11, panel12, panel13;
     private JTextField txtSearch, txtMaSP, txtLoaiSP, txtTenSP, txtDonGia, txtSoLuong, txtMaPhieuNhap, txtTongTien,
-            txtNhaCungCap, txtNhanVien, txtNgayLap, txtGioLap;
+            txtNhaCungCap, txtNgayLap, txtGioLap;
     private JButton btnReset, btnAdd, btnXoa, btnReset2, btnChoose, btnTong;
     private JScrollPane scrollPane2, scrollPane1;
     private JTable tableSell, tableSell2;
@@ -46,11 +58,12 @@ public class FormNhapHang extends JPanel {
 
     public FormNhapHang() {
         allProducts = new ArrayList<>();
-        dsctpn = new ArrayList<>();
         productBUS = new ProductBUS();
         typeProductBUS = new TypeProductBUS();
-        employeeBUS = new EmployeeBUS();
         importBUS = new ImportBUS();
+        employeeBUS = new EmployeeBUS();
+        supplierBUS = new SupplierBUS();
+        inventoryBUS = new InventoryBUS();
         initComponents();
         refresh();
     }
@@ -78,7 +91,6 @@ public class FormNhapHang extends JPanel {
         txtMaPhieuNhap = new JTextField();
         txtTongTien = new JTextField();
         txtNhaCungCap = new JTextField();
-        txtNhanVien = new JTextField();
         txtNgayLap = new JTextField();
         txtGioLap = new JTextField();
         panel10 = new JPanel();
@@ -260,9 +272,8 @@ public class FormNhapHang extends JPanel {
         txtMaPhieuNhap.setPreferredSize(new Dimension(200, 55));
         txtMaPhieuNhap.setBorder(new TitledBorder(null, "Mã phiếu nhập", TitledBorder.LEADING,
                 TitledBorder.DEFAULT_POSITION, null, Color.black));
-        // String nextImportID = importBUS.getNextImportID();
-        // txtMaPhieuNhap.setText(nextImportID);
-        txtMaPhieuNhap.setEnabled(false);
+        txtMaPhieuNhap.setText(importBUS.getNextImportID());
+        txtMaPhieuNhap.setEditable(false);
         panel9.add(txtMaPhieuNhap);
 
         txtTongTien.setPreferredSize(new Dimension(200, 55));
@@ -293,22 +304,6 @@ public class FormNhapHang extends JPanel {
         });
         panel9.add(btnChoose);
 
-        txtNhanVien.setPreferredSize(new Dimension(200, 55));
-        txtNhanVien.setBorder(new TitledBorder(null, "Nhân viên", TitledBorder.LEADING,
-                TitledBorder.DEFAULT_POSITION, null, Color.black));
-        UsersDTO currentUser = SessionManager.getInstance().getCurrentUser();
-        EmployeeDTO employee = null;
-        if (currentUser != null && currentUser.getMaNV() != null) {
-            employee = employeeBUS.getEmployeeByMaNV(currentUser.getMaNV());
-        }
-        if (employee != null) {
-            txtNhanVien.setText(employee.getTenNV() + " - " + employee.getMaNV());
-        } else {
-            txtNhanVien.setText("Không tìm thấy nhân viên");
-        }
-        txtNhanVien.setEnabled(false);
-        panel9.add(txtNhanVien);
-
         txtNgayLap.setPreferredSize(new Dimension(200, 55));
         txtNgayLap.setBorder(new TitledBorder(null, "Ngày lập", TitledBorder.LEADING,
                 TitledBorder.DEFAULT_POSITION, null, Color.black));
@@ -333,8 +328,8 @@ public class FormNhapHang extends JPanel {
         btnXoa.addActionListener(e -> {
             int selectedRow = tableSell2.getSelectedRow();
             if (selectedRow != -1) {
-                dsctpn.remove(selectedRow);
-                setDataToTableImportDetails(dsctpn);
+                allProducts.remove(selectedRow);
+                setDataToTableImportDetails(allProducts);
                 updateTotalPrice();
             } else {
                 JOptionPane.showMessageDialog(null, "Vui lòng chọn sản phẩm cần xóa!");
@@ -345,8 +340,8 @@ public class FormNhapHang extends JPanel {
         btnReset2.setText("Làm mới");
         btnReset2.setIcon(loadImageIcon("/org/example/GUI/resources/images/icons8_data_backup_30px.png"));
         btnReset2.addActionListener(e -> {
-            dsctpn.clear();
-            setDataToTableImportDetails(dsctpn);
+            allProducts.clear();
+            setDataToTableImportDetails(allProducts);
             updateTotalPrice();
         });
         panel11.add(btnReset2);
@@ -355,7 +350,7 @@ public class FormNhapHang extends JPanel {
         tableSell2.setFont(font);
         tableSell2.getTableHeader().setFont(fontHeader);
         tableSell2.setRowHeight(30);
-        tableSell2.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        tableSell.setBorder(new BevelBorder(BevelBorder.LOWERED));
         tableSell2.setModel(new DefaultTableModel(
                 new Object[][] { { null, null, null, null, null, null } },
                 new String[] { "STT", "Mã sản phẩm", "Tên sản phẩm", "Số lượng", "Đơn giá", "Thành tiền" }));
@@ -369,6 +364,173 @@ public class FormNhapHang extends JPanel {
         panel13.setLayout(new FlowLayout(FlowLayout.RIGHT));
         btnTong.setText("Nhập hàng");
         btnTong.setIcon(loadImageIcon("/org/example/GUI/resources/images/icons8_us_dollar_30px.png"));
+        btnTong.addActionListener(e -> {
+            if (allProducts.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Vui lòng thêm sản phẩm vào phiếu nhập!");
+                return;
+            }
+
+            if (txtNhaCungCap.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn nhà cung cấp!");
+                return;
+            }
+
+            try {
+                // Bắt đầu transaction
+                Connection conn = UtilsJDBC.getConnectDB();
+                conn.setAutoCommit(false);
+
+                try {
+                    // Tạo phiếu nhập mới
+                    ImportDTO importSlip = new ImportDTO();
+                    importSlip.setMaPN(txtMaPhieuNhap.getText());
+
+                    // Lấy mã nhà cung cấp
+                    String nccText = txtNhaCungCap.getText();
+                    String maNCC = nccText.contains(" - ") ? nccText.split(" - ")[1] : nccText;
+                    importSlip.setMaNCC(maNCC);
+
+                    // Lấy thông tin nhân viên từ SessionManager
+                    UsersDTO currentUser = SessionManager.getInstance().getCurrentUser();
+                    if (currentUser != null && currentUser.getMaNV() != null) {
+                        importSlip.setMaNV(currentUser.getMaNV());
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Không tìm thấy thông tin nhân viên!");
+                        return;
+                    }
+
+                    importSlip.setNgayNhap(
+                            java.sql.Date
+                                    .valueOf(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))));
+                    importSlip.setGioNhap(
+                            java.sql.Time.valueOf(LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))));
+                    importSlip.setTongTien(Float.parseFloat(txtTongTien.getText().replace(",", "")));
+
+                    // Thêm phiếu nhập vào database
+                    String sqlImport = "INSERT INTO import (MaPN, MaNCC, MaNV, NgayNhap, GioNhap, TongTien) VALUES (?, ?, ?, ?, ?, ?)";
+                    try (PreparedStatement pst = conn.prepareStatement(sqlImport)) {
+                        pst.setString(1, importSlip.getMaPN());
+                        pst.setString(2, importSlip.getMaNCC());
+                        pst.setString(3, importSlip.getMaNV());
+                        pst.setDate(4, importSlip.getNgayNhap());
+                        pst.setTime(5, importSlip.getGioNhap());
+                        pst.setFloat(6, importSlip.getTongTien());
+
+                        if (pst.executeUpdate() > 0) {
+                            // Thêm chi tiết phiếu nhập và cập nhật số lượng sản phẩm
+                            boolean allDetailsAdded = true;
+                            String sqlDetail = "INSERT INTO import_details (MaPN, MaSP, SoLuong, DonGia) VALUES (?, ?, ?, ?)";
+                            String sqlUpdateProduct = "UPDATE product SET SoLuong = SoLuong - ? WHERE MaSP = ?";
+                            String sqlUpdateInventory = "UPDATE tonkho SET SoLuong = SoLuong + ? WHERE MaSP = ?";
+                            String sqlInsertInventory = "INSERT INTO tonkho (MaSP, MaLSP, TenSP, DonGia, HinhAnh, TrangThai, SoLuong) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+                            try (PreparedStatement pstDetail = conn.prepareStatement(sqlDetail);
+                                    PreparedStatement pstUpdateProduct = conn.prepareStatement(sqlUpdateProduct);
+                                    PreparedStatement pstUpdateInventory = conn.prepareStatement(sqlUpdateInventory);
+                                    PreparedStatement pstInsertInventory = conn.prepareStatement(sqlInsertInventory)) {
+
+                                for (ProductDTO detail : allProducts) {
+                                    // Thêm chi tiết phiếu nhập
+                                    pstDetail.setString(1, txtMaPhieuNhap.getText());
+                                    pstDetail.setString(2, detail.getMaSP());
+                                    pstDetail.setInt(3, detail.getSoLuong());
+                                    pstDetail.setFloat(4, detail.getDonGia());
+
+                                    if (pstDetail.executeUpdate() <= 0) {
+                                        allDetailsAdded = false;
+                                        break;
+                                    }
+
+                                    // Cập nhật số lượng trong bảng product
+                                    pstUpdateProduct.setInt(1, detail.getSoLuong());
+                                    pstUpdateProduct.setString(2, detail.getMaSP());
+
+                                    if (pstUpdateProduct.executeUpdate() <= 0) {
+                                        allDetailsAdded = false;
+                                        break;
+                                    }
+
+                                    // Kiểm tra và cập nhật số lượng trong bảng tonkho
+                                    pstUpdateInventory.setInt(1, detail.getSoLuong());
+                                    pstUpdateInventory.setString(2, detail.getMaSP());
+
+                                    if (pstUpdateInventory.executeUpdate() <= 0) {
+                                        // Nếu không có trong bảng tonkho, thêm mới
+                                        pstInsertInventory.setString(1, detail.getMaSP());
+                                        pstInsertInventory.setString(2, detail.getMaLSP());
+                                        pstInsertInventory.setString(3, detail.getTenSP());
+                                        pstInsertInventory.setFloat(4, detail.getDonGia());
+                                        pstInsertInventory.setString(5, detail.getHinhAnh());
+                                        pstInsertInventory.setInt(6, detail.getTrangthai());
+                                        pstInsertInventory.setInt(7, detail.getSoLuong());
+
+                                        if (pstInsertInventory.executeUpdate() <= 0) {
+                                            allDetailsAdded = false;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (allDetailsAdded) {
+                                // Commit transaction nếu tất cả thao tác thành công
+                                conn.commit();
+
+                                // Reset form
+                                allProducts.clear();
+                                setDataToTableImportDetails(allProducts);
+                                updateTotalPrice();
+                                txtMaPhieuNhap.setText(importBUS.getNextImportID());
+                                txtNhaCungCap.setText("");
+
+                                // Hiển thị thông báo thành công
+                                JOptionPane.showMessageDialog(this, "Nhập hàng thành công!");
+
+                                // Đóng kết nối transaction
+                                conn.setAutoCommit(true);
+                                conn.close();
+
+                                // Refresh lại danh sách sản phẩm trong EDT
+                                SwingUtilities.invokeLater(() -> {
+                                    try {
+                                        productBUS.listSP();
+                                        setDataTable(productBUS.getList());
+                                    } catch (Exception ex) {
+                                        // Bỏ qua lỗi kết nối đã đóng vì không ảnh hưởng đến chức năng
+                                    }
+                                });
+                            } else {
+                                // Rollback nếu có lỗi
+                                conn.rollback();
+                                JOptionPane.showMessageDialog(this, "Có lỗi xảy ra khi thêm chi tiết phiếu nhập!");
+                            }
+                        } else {
+                            // Rollback nếu không thêm được phiếu nhập
+                            conn.rollback();
+                            JOptionPane.showMessageDialog(this, "Có lỗi xảy ra khi tạo phiếu nhập!");
+                        }
+                    }
+                } catch (Exception ex) {
+                    // Rollback nếu có exception
+                    if (conn != null && !conn.isClosed()) {
+                        conn.rollback();
+                    }
+                    throw ex;
+                } finally {
+                    // Đóng kết nối
+                    if (conn != null && !conn.isClosed()) {
+                        conn.setAutoCommit(true);
+                        conn.close();
+                    }
+                }
+            } catch (Exception ex) {
+                // Chỉ hiển thị thông báo lỗi nếu không phải lỗi kết nối đã đóng
+                if (!(ex instanceof SQLNonTransientConnectionException) &&
+                        !(ex.getCause() instanceof ConnectionIsClosedException)) {
+                    JOptionPane.showMessageDialog(this, "Có lỗi xảy ra: " + ex.getMessage());
+                }
+            }
+        });
         panel13.add(btnTong);
         panel8.add(panel13, BorderLayout.SOUTH);
         add(panel8, BorderLayout.CENTER);
@@ -485,32 +647,46 @@ public class FormNhapHang extends JPanel {
             JOptionPane.showMessageDialog(this, "Không tìm thấy sản phẩm!");
             return;
         }
+        if (soLuong > product.getSoLuong()) {
+            JOptionPane.showMessageDialog(this, "Số lượng vượt quá số lượng sản phẩm!");
+            return;
+        }
         boolean checkSoLuong = false;
-        for (ImportDetailDTO cthd : dsctpn) {
+        for (ProductDTO cthd : allProducts) {
             if (cthd.getMaSP().equals(maSP)) {
                 int tongSoLuong = soLuong + cthd.getSoLuong();
+                if (tongSoLuong > product.getSoLuong()) {
+                    JOptionPane.showMessageDialog(this, "Số lượng vượt quá số lượng sản phẩm!");
+                    return;
+                }
                 cthd.setSoLuong(tongSoLuong);
                 checkSoLuong = true;
             }
         }
         if (!checkSoLuong) {
-            ImportDetailDTO importDetail = new ImportDetailDTO(txtMaPhieuNhap.getText(), maSP, soLuong,
-                    product.getDonGia());
-            dsctpn.add(importDetail);
+            ProductDTO importDetail = new ProductDTO(
+                    product.getMaSP(),
+                    product.getMaLSP(),
+                    product.getTenSP(),
+                    product.getDonGia(),
+                    soLuong,
+                    product.getHinhAnh(),
+                    product.getTrangthai());
+            allProducts.add(importDetail);
         }
         updateTotalPrice();
-        setDataToTableImportDetails(dsctpn);
+        setDataToTableImportDetails(allProducts);
     }
 
     public void updateTotalPrice() {
         float total = 0;
-        for (ImportDetailDTO detail : dsctpn) {
+        for (ProductDTO detail : allProducts) {
             total += detail.getDonGia() * detail.getSoLuong();
         }
         txtTongTien.setText(priceFormatter.format(total));
     }
 
-    public void setDataToTableImportDetails(ArrayList<ImportDetailDTO> data) {
+    public void setDataToTableImportDetails(ArrayList<ProductDTO> data) {
         DefaultTableModel model = new DefaultTableModel();
         model.addColumn("STT");
         model.addColumn("Mã sản phẩm");
@@ -519,7 +695,7 @@ public class FormNhapHang extends JPanel {
         model.addColumn("Đơn giá");
         model.addColumn("Thành tiền");
         int stt = 1;
-        for (ImportDetailDTO cthd : data) {
+        for (ProductDTO cthd : data) {
             ProductDTO sp = productBUS.getProductDTO(cthd.getMaSP());
             String tensp = sp != null ? sp.getTenSP() : "Không tìm thấy";
             int soluong = cthd.getSoLuong();

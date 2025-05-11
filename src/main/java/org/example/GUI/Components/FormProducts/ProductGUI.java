@@ -39,6 +39,8 @@ public class ProductGUI extends JPanel {
     private ProductBUS productBus;
     private TypeProductBUS typeProductBus;
     private ProductDialog productDialog;
+    private JTextField searchField;
+    private JComboBox<String> searchComboBox;
 
     public ProductGUI() {
         setLayout(new BorderLayout());
@@ -93,20 +95,56 @@ public class ProductGUI extends JPanel {
 
         // Phần tìm kiếm: Căn giữa
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        JComboBox<String> searchComboBox = new JComboBox<>(new String[] { "Đang bán", "Ngừng bán" });
+        searchComboBox = new JComboBox<>(new String[] { "Đang bán", "Ngừng bán" });
         searchComboBox.setPreferredSize(new Dimension(150, 30));
-        JTextField searchField = new JTextField(20);
+        searchField = new JTextField(20);
         searchField.setPreferredSize(new Dimension(200, 30));
-        JButton btnSearch = new JButton("Tìm kiếm");
         JButton btnReset = new JButton("Làm mới");
 
-        // Tăng kích thước các nút tìm kiếm
-        btnSearch.setPreferredSize(new Dimension(100, 30));
+        // Thêm sự kiện cho combobox
+        searchComboBox.addActionListener(e -> {
+            performSearch(false);
+        });
+
+        // Thêm sự kiện Enter cho ô tìm kiếm
+        searchField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+                    performSearch(true);
+                }
+            }
+        });
+
+        // Thêm sự kiện khi ô tìm kiếm mất focus
+        searchField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                performSearch(true);
+            }
+        });
+
+        // Thêm chức năng tìm kiếm realtime
+        searchField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            @Override
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                performSearch(false);
+            }
+
+            @Override
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                performSearch(false);
+            }
+
+            @Override
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                performSearch(false);
+            }
+        });
+
+        // Tăng kích thước nút làm mới
         btnReset.setPreferredSize(new Dimension(100, 30));
 
         searchPanel.add(searchComboBox);
         searchPanel.add(searchField);
-        searchPanel.add(btnSearch);
         searchPanel.add(btnReset);
 
         // Phần bảng: Thiết lập các cột dựa trên ProductDTO
@@ -167,6 +205,45 @@ public class ProductGUI extends JPanel {
 
         add(topPanel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
+    }
+
+    private void performSearch(boolean showMessage) {
+        String searchText = searchField.getText().trim();
+        String searchType = (String) searchComboBox.getSelectedItem();
+
+        model.setRowCount(0);
+        List<ProductDTO> products = productBus.getList();
+
+        for (ProductDTO product : products) {
+            boolean matches = false;
+
+            // Kiểm tra trạng thái sản phẩm
+            boolean statusMatch = (searchType.equals("Đang bán") && product.getTrangthai() == 1) ||
+                    (searchType.equals("Ngừng bán") && product.getTrangthai() == 0);
+
+            // Kiểm tra tất cả các trường nếu có từ khóa tìm kiếm
+            boolean textMatch = true;
+            if (!searchText.isEmpty()) {
+                textMatch = product.getMaSP().toLowerCase().contains(searchText.toLowerCase()) ||
+                        product.getTenSP().toLowerCase().contains(searchText.toLowerCase()) ||
+                        product.getMaLSP().toLowerCase().contains(searchText.toLowerCase()) ||
+                        String.valueOf(product.getDonGia()).contains(searchText) ||
+                        String.valueOf(product.getSoLuong()).contains(searchText);
+            }
+
+            matches = statusMatch && textMatch;
+
+            if (matches) {
+                addProductToTable(product);
+            }
+        }
+
+        if (showMessage && model.getRowCount() == 0 && !searchText.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "Không tìm thấy sản phẩm nào phù hợp với điều kiện tìm kiếm!",
+                    "Thông báo",
+                    JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     private void loadDataFromDatabase() {

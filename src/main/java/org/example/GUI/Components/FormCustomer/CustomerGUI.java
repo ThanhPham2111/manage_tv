@@ -82,20 +82,16 @@ public class CustomerGUI extends JPanel {
         // Panel 5 (Trạng thái khách hàng)
         panel5 = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panel5.setBorder(new TitledBorder("Trạng thái khách hàng"));
-        comboBox2 = new JComboBox<>(new String[] { "Tất cả", "Đang hoạt động", "Đã khóa" });
-        comboBox2.setPreferredSize(new Dimension(200, 40)); // Giảm chiều cao để vừa với layout
+        comboBox2 = new JComboBox<>(new String[] { "Đang hoạt động", "Đã khóa" });
+        comboBox2.setPreferredSize(new Dimension(200, 40));
         panel5.add(comboBox2);
         panel3.add(panel5);
 
         // Panel 4 (Tìm kiếm)
         panel4 = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panel4.setBorder(new TitledBorder("Tìm kiếm"));
-        comboBox1 = new JComboBox<>(
-                new String[] { "Tất cả", "Mã khách hàng", "Tên khách hàng", "Địa chỉ", "Số điện thoại", "Trạng thái" });
         textField1 = new JTextField(15);
-        comboBox1.setPreferredSize(new Dimension(140, 40));
-        textField1.setPreferredSize(new Dimension(144, 40));
-        panel4.add(comboBox1);
+        textField1.setPreferredSize(new Dimension(200, 40));
         panel4.add(textField1);
         panel3.add(panel4);
 
@@ -138,42 +134,42 @@ public class CustomerGUI extends JPanel {
             @Override
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
-                    filterByStatus();
+                    performSearch(true);
                 }
             }
         });
 
-        // Thêm chức năng tìm kiếm
+        // Thêm sự kiện Enter cho ô tìm kiếm
+        textField1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+                    performSearch(true);
+                }
+            }
+        });
+
+        // Thêm sự kiện khi ô tìm kiếm mất focus
+        textField1.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                performSearch(true);
+            }
+        });
+
+        // Thêm chức năng tìm kiếm realtime
         textField1.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-                performSearch();
+                performSearch(false);
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                performSearch();
+                performSearch(false);
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                performSearch();
-            }
-
-            private void performSearch() {
-                String value = textField1.getText().trim();
-                String type = (String) comboBox1.getSelectedItem();
-                ArrayList<CustomerDTO> result = qlkh.getList();
-
-                if (!value.isEmpty() && !"Tất cả".equals(type)) {
-                    result = new ArrayList<>();
-                    for (CustomerDTO kh : qlkh.getList()) {
-                        if (qlkh.isMatched(kh, type, value)) {
-                            result.add(kh);
-                        }
-                    }
-                }
-                setDataToTable(result);
+                performSearch(false);
             }
         });
     }
@@ -247,16 +243,43 @@ public class CustomerGUI extends JPanel {
         }
     }
 
-    private void filterByStatus() {
+    private void performSearch(boolean showMessage) {
+        String searchText = textField1.getText().trim();
         String selectedStatus = (String) comboBox2.getSelectedItem();
-        ArrayList<CustomerDTO> result;
-        if ("Tất cả".equals(selectedStatus)) {
-            result = qlkh.getList();
-        } else {
-            int status = "Đang hoạt động".equals(selectedStatus) ? 0 : 1;
-            result = qlkh.filterByStatus(status);
+        ArrayList<CustomerDTO> result = new ArrayList<>();
+        ArrayList<CustomerDTO> allCustomers = qlkh.getList();
+
+        for (CustomerDTO customer : allCustomers) {
+            boolean matches = false;
+
+            // Kiểm tra trạng thái khách hàng
+            boolean statusMatch = (selectedStatus.equals("Đang hoạt động") && customer.getTrangThai() == 0) ||
+                                (selectedStatus.equals("Đã khóa") && customer.getTrangThai() == 1);
+
+            // Kiểm tra tất cả các trường nếu có từ khóa tìm kiếm
+            boolean textMatch = true;
+            if (!searchText.isEmpty()) {
+                textMatch = customer.getMaKH().toLowerCase().contains(searchText.toLowerCase()) ||
+                           customer.getTenKH().toLowerCase().contains(searchText.toLowerCase()) ||
+                           customer.getDiaChi().toLowerCase().contains(searchText.toLowerCase()) ||
+                           customer.getSdt().toLowerCase().contains(searchText.toLowerCase());
+            }
+
+            matches = statusMatch && textMatch;
+
+            if (matches) {
+                result.add(customer);
+            }
         }
+
         setDataToTable(result);
+
+        if (showMessage && result.isEmpty() && !searchText.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "Không tìm thấy khách hàng nào phù hợp với điều kiện tìm kiếm!",
+                    "Thông báo",
+                    JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     public void refresh() {
