@@ -86,10 +86,9 @@ public class AccountManagementForm extends JPanel {
                 JTextField usernameField = new JTextField(20);
                 JPasswordField passwordField = new JPasswordField(20);
                 JTextField employeeIdField = new JTextField(20);
-                JTextField roleIdField = new JTextField(20);
 
                 JPanel panel = new JPanel(new GridLayout(0, 2, 10, 10));
-                panel.setPreferredSize(new Dimension(400, 250));
+                panel.setPreferredSize(new Dimension(400, 200));
 
                 panel.add(new JLabel("Email:"));
                 panel.add(emailField);
@@ -99,8 +98,6 @@ public class AccountManagementForm extends JPanel {
                 panel.add(passwordField);
                 panel.add(new JLabel("Mã nhân viên:"));
                 panel.add(employeeIdField);
-                panel.add(new JLabel("Mã quyền:"));
-                panel.add(roleIdField);
 
                 boolean isValid = false;
 
@@ -113,10 +110,8 @@ public class AccountManagementForm extends JPanel {
                         String username = usernameField.getText();
                         String password = new String(passwordField.getPassword());
                         String employeeId = employeeIdField.getText();
-                        String roleId = roleIdField.getText();
 
-                        if (email.isEmpty() || username.isEmpty() || password.isEmpty() || employeeId.isEmpty()
-                                || roleId.isEmpty()) {
+                        if (email.isEmpty() || username.isEmpty() || password.isEmpty() || employeeId.isEmpty()) {
                             JOptionPane.showMessageDialog(null, "Tất cả các trường phải được điền đầy đủ.", "Lỗi",
                                     JOptionPane.ERROR_MESSAGE);
                         } else if (!email.contains("@")) {
@@ -130,7 +125,7 @@ public class AccountManagementForm extends JPanel {
                                     username,
                                     password,
                                     employeeId,
-                                    roleId);
+                                    "Q2"); // Default role ID
 
                             if (accountBUS.addAccount(newAccount)) {
                                 loadAccountData(accountBUS.getAllAccounts());
@@ -185,16 +180,14 @@ public class AccountManagementForm extends JPanel {
                     String username = (String) table.getValueAt(row, 2);
                     String password = (String) table.getValueAt(row, 3);
                     String employeeId = (String) table.getValueAt(row, 4);
-                    String roleId = (String) table.getValueAt(row, 5);
 
                     JTextField emailField = new JTextField(email, 20);
                     JTextField usernameField = new JTextField(username, 20);
                     JPasswordField passwordField = new JPasswordField(password, 20);
                     JTextField employeeIdField = new JTextField(employeeId, 20);
-                    JTextField roleIdField = new JTextField(roleId, 20);
 
                     JPanel panel = new JPanel(new GridLayout(0, 2, 10, 10));
-                    panel.setPreferredSize(new Dimension(400, 250));
+                    panel.setPreferredSize(new Dimension(400, 200));
 
                     panel.add(new JLabel("Email:"));
                     panel.add(emailField);
@@ -204,8 +197,6 @@ public class AccountManagementForm extends JPanel {
                     panel.add(passwordField);
                     panel.add(new JLabel("Mã nhân viên:"));
                     panel.add(employeeIdField);
-                    panel.add(new JLabel("Mã quyền:"));
-                    panel.add(roleIdField);
 
                     boolean isValid = false;
 
@@ -218,10 +209,9 @@ public class AccountManagementForm extends JPanel {
                             String newUsername = usernameField.getText();
                             String newPassword = new String(passwordField.getPassword());
                             String newEmployeeId = employeeIdField.getText();
-                            String newRoleId = roleIdField.getText();
 
                             if (newEmail.isEmpty() || newUsername.isEmpty() || newPassword.isEmpty()
-                                    || newEmployeeId.isEmpty() || newRoleId.isEmpty()) {
+                                    || newEmployeeId.isEmpty()) {
                                 JOptionPane.showMessageDialog(null, "Tất cả các trường phải được điền đầy đủ.", "Lỗi",
                                         JOptionPane.ERROR_MESSAGE);
                             } else if (!newEmail.contains("@")) {
@@ -229,7 +219,7 @@ public class AccountManagementForm extends JPanel {
                                         JOptionPane.ERROR_MESSAGE);
                             } else {
                                 AccountDTO updatedAccount = new AccountDTO(
-                                        id, newEmail, newUsername, newPassword, newEmployeeId, newRoleId);
+                                        id, newEmail, newUsername, newPassword, newEmployeeId, "Q2"); // Default role ID
 
                                 if (accountBUS.updateAccount(updatedAccount)) {
                                     loadAccountData(accountBUS.getAllAccounts());
@@ -293,7 +283,7 @@ public class AccountManagementForm extends JPanel {
         filterPanel.add(new JLabel("Tìm kiếm:"));
 
         searchTypeComboBox = new JComboBox<>(
-                new String[] { "Tất cả", "Email", "Tên tài khoản", "Mã nhân viên", "Mã quyền" });
+                new String[] { "Tất cả", "Email", "Tên tài khoản", "Mã nhân viên" });
         filterPanel.add(searchTypeComboBox);
 
         searchField = new JTextField(15);
@@ -315,7 +305,7 @@ public class AccountManagementForm extends JPanel {
         mainPanel.add(topPanel, BorderLayout.NORTH);
 
         // ===================== Table Data =======================
-        String[] columnNames = { "STT", "Email", "Tên tài khoản", "Mật khẩu", "Mã nhân viên", "Mã quyền" };
+        String[] columnNames = { "STT", "Email", "Tên tài khoản", "Mật khẩu", "Mã nhân viên" };
 
         model = new DefaultTableModel(columnNames, 0) {
             @Override
@@ -393,8 +383,7 @@ public class AccountManagementForm extends JPanel {
                     account.getEmail(),
                     account.getUsername(),
                     account.getPassword(),
-                    account.getEmployeeId(),
-                    account.getRoleId()
+                    account.getEmployeeId()
             });
         }
         System.out.println("Loaded " + accounts.size() + " accounts into table.");
@@ -472,14 +461,14 @@ public class AccountManagementForm extends JPanel {
                 }
 
                 String[] rowData = line.split(",");
-                if (rowData.length >= 6) {
+                if (rowData.length >= 5) {
                     AccountDTO account = new AccountDTO(
                             Integer.parseInt(rowData[0]),
                             rowData[1],
                             rowData[2],
                             rowData[3],
                             rowData[4],
-                            rowData[5]);
+                            "Q2"); // Default role ID
                     accountBUS.addAccount(account);
                 }
             }

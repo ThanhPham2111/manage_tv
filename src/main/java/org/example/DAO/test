@@ -1,0 +1,22 @@
+public Boolean update(String maKH, String tenKH, String diaChi, String sdt, int trangThai){
+    Connection con = UtilsJDBC.getConnectDB();
+    String sql = "UPDATE customer SET TenKH = ?, DiaChi = ?, SDT = ?, TrangThai = ? WHERE MaKH = ?";
+    try{
+        PreparedStatement stmt = con.prepareStatement(sql);
+        stmt.setString(1, tenKH);
+        stmt.setString(2, diaChi);
+        stmt.setString(3, sdt);
+        stmt.setInt(4, trangThai);
+        stmt.setString(5, maKH);
+        int rowsAffected = stmt.executeUpdate();
+        return rowsAffected > 0;
+
+    }
+    catch(SQLException e){
+        e.printStackTrace();
+        return false;
+    }
+    finally{
+        UtilsJDBC.closeConnection();
+    }
+}

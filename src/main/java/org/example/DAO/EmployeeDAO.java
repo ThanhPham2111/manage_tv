@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.sql.Date;
 
 public class EmployeeDAO {
     private ArrayList<EmployeeDTO> dsnv = new ArrayList<>();
@@ -26,7 +27,7 @@ public class EmployeeDAO {
             while (rs.next()) {
                 String maNV = rs.getString("MaNV");
                 String tenNV = rs.getString("TenNV");
-                java.sql.Date ngaySinh = rs.getDate("NgaySinh");
+                Date ngaySinh = rs.getDate("NgaySinh");
                 String diaChi = rs.getString("DiaChi");
                 String sdt = rs.getString("SDT");
                 int trangThai = rs.getInt("TrangThai");

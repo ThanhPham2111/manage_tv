@@ -38,7 +38,7 @@ public class CustomerDAO {
         }
         return dskh;
     }
-
+// phuong thuc them
     public Boolean add(CustomerDTO customer) {
         Connection con = UtilsJDBC.getConnectDB();
         String sql = "INSERT INTO customer(MaKH, TenKH, DiaChi, SDT, TrangThai) VALUES (?, ?, ?, ?, ?)";
@@ -68,7 +68,7 @@ public class CustomerDAO {
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setString(1, tenKH);
             stmt.setString(2, diaChi);
-            stmt.setString(3, sdt);
+            stmt.setString(3, sdt);         
             stmt.setInt(4, trangThai);
             stmt.setString(5, maKH);
 
@@ -80,12 +80,6 @@ public class CustomerDAO {
         } finally {
             UtilsJDBC.closeConnection();
         }
-    }
-
-    // Giữ phương thức update với CustomerDTO (tùy chọn)
-    public Boolean update(CustomerDTO customer) {
-        return update(customer.getMaKH(), customer.getTenKH(), customer.getDiaChi(), customer.getSdt(),
-                customer.getTrangThai());
     }
 
     public Boolean updateTrangThai(String maKH, int trangThai) {
