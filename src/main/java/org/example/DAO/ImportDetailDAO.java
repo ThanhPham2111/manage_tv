@@ -17,22 +17,42 @@ public class ImportDetailDAO {
 
     public List<ImportDetailDTO> getDetailsByImportSlipId(String maPhieuNhap) {
         List<ImportDetailDTO> details = new ArrayList<>();
-        String sql = "SELECT * FROM import_details WHERE MaPN=?";
+        String sql = "SELECT id.*, p.TenSP, (id.DonGia * id.SoLuong) as ThanhTien, " +
+                    "i.TongTien as TongTienPhieuNhap " +
+                    "FROM import_details id " +
+                    "JOIN product p ON id.MaSP = p.MaSP " +
+                    "JOIN import i ON id.MaPN = i.MaPN " +
+                    "WHERE id.MaPN=?";
         try {
             conn = UtilsJDBC.getConnectDB();
             pst = conn.prepareStatement(sql);
             pst.setString(1, maPhieuNhap);
             rs = pst.executeQuery();
 
+            float tongTienChiTiet = 0;
+            float tongTienPhieuNhap = 0;
+
             while (rs.next()) {
                 ImportDetailDTO detail = new ImportDetailDTO();
                 detail.setMaPN(rs.getString("MaPN"));
-                detail.setMaSP(rs.getString("MaSP"));
+                detail.setMaSP(rs.getString("MaSP")); 
                 detail.setSoLuong(rs.getInt("SoLuong"));
                 detail.setDonGia(rs.getFloat("DonGia"));
-                detail.setThanhTien(rs.getFloat("ThanhTien"));
+                float thanhTien = rs.getFloat("ThanhTien");
+                detail.setThanhTien(thanhTien);
+                tongTienChiTiet += thanhTien;
+                tongTienPhieuNhap = rs.getFloat("TongTienPhieuNhap");
                 details.add(detail);
             }
+
+            // Kiểm tra nếu có sự chênh lệch
+            if (Math.abs(tongTienChiTiet - tongTienPhieuNhap) > 0.01) {
+                System.out.println("Cảnh báo: Có sự chênh lệch giữa tổng tiền chi tiết (" + 
+                    tongTienChiTiet + ") và tổng tiền phiếu nhập (" + tongTienPhieuNhap + ")");
+                // Cập nhật lại tổng tiền trong bảng import nếu cần
+                updateTotalAmount(maPhieuNhap, tongTienChiTiet);
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -41,19 +61,32 @@ public class ImportDetailDAO {
         return details;
     }
 
-    public boolean addImportSlipDetail(ImportDetailDTO detail) {
-        String sql = "INSERT INTO import_details (MaPN, MaSP, SoLuong, DonGia, ThanhTien) VALUES (?, ?, ?, ?, ?)";
+    private void updateTotalAmount(String maPhieuNhap, float newTotal) {
+        String sql = "UPDATE import SET TongTien = ? WHERE MaPN = ?";
         try {
             conn = UtilsJDBC.getConnectDB();
             pst = conn.prepareStatement(sql);
+            pst.setFloat(1, newTotal);
+            pst.setString(2, maPhieuNhap);
+            pst.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            UtilsJDBC.closeConnection();
+        }
+    }
+
+    public boolean addImportDetail(ImportDetailDTO detail) {
+        String query = "INSERT INTO import_details (MaPN, MaSP, SoLuong, DonGia) VALUES (?, ?, ?, ?)";
+        try {
+            conn = UtilsJDBC.getConnectDB();
+            pst = conn.prepareStatement(query);
             pst.setString(1, detail.getMaPN());
             pst.setString(2, detail.getMaSP());
             pst.setInt(3, detail.getSoLuong());
             pst.setFloat(4, detail.getDonGia());
-            pst.setFloat(5, detail.getThanhTien());
-
             return pst.executeUpdate() > 0;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         } finally {
@@ -62,15 +95,14 @@ public class ImportDetailDAO {
     }
 
     public boolean updateImportSlipDetail(ImportDetailDTO detail) {
-        String sql = "UPDATE import_details SET SoLuong=?, DonGia=?, ThanhTien=? WHERE MaPN=? AND MaSP=?";
+        String sql = "UPDATE import_details SET SoLuong=?, DonGia=? WHERE MaPN=? AND MaSP=?";
         try {
             conn = UtilsJDBC.getConnectDB();
             pst = conn.prepareStatement(sql);
             pst.setInt(1, detail.getSoLuong());
             pst.setFloat(2, detail.getDonGia());
-            pst.setFloat(3, detail.getThanhTien());
-            pst.setString(4, detail.getMaPN());
-            pst.setString(5, detail.getMaSP());
+            pst.setString(3, detail.getMaPN());
+            pst.setString(4, detail.getMaSP());
 
             return pst.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -107,24 +139,6 @@ public class ImportDetailDAO {
 
             return pst.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        } finally {
-            UtilsJDBC.closeConnection();
-        }
-    }
-
-    public boolean addImportDetail(ImportDetailDTO detail) {
-        String query = "INSERT INTO import_detail (MaPN, MaSP, SoLuong, DonGia) VALUES (?, ?, ?, ?)";
-        try {
-            conn = UtilsJDBC.getConnectDB();
-            pst = conn.prepareStatement(query);
-            pst.setString(1, detail.getMaPN());
-            pst.setString(2, detail.getMaSP());
-            pst.setInt(3, detail.getSoLuong());
-            pst.setFloat(4, detail.getDonGia());
-            return pst.executeUpdate() > 0;
-        } catch (Exception e) {
             e.printStackTrace();
             return false;
         } finally {

@@ -98,6 +98,12 @@ public class FormChiTietPhieuNhap extends JDialog {
     private void loadData() {
         // Load thông tin phiếu nhập
         ImportDTO importSlip = importSlipBUS.getImportSlipById(maPhieuNhap);
+        if (importSlip == null) {
+            System.out.println("Không tìm thấy thông tin phiếu nhập");
+            return;
+        }
+
+        
         if (importSlip != null) {
             txtMaPhieuNhap.setText(importSlip.getMaPN());
             txtNhaCungCap.setText(importSlip.getMaNCC());
@@ -113,6 +119,10 @@ public class FormChiTietPhieuNhap extends JDialog {
 
         List<ImportDetailDTO> details = importSlipBUS.getImportSlipDetails(maPhieuNhap);
         int stt = 1;
+        if (details == null || details.isEmpty()) {
+            System.out.println("Không tìm thấy chi tiết phiếu nhập");
+            return;
+        }
         for (ImportDetailDTO detail : details) {
             ProductDTO product = productBUS.getProductDTO(detail.getMaSP());
             String tenSP = product != null ? product.getTenSP() : "";

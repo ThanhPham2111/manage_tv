@@ -37,7 +37,7 @@ import java.text.SimpleDateFormat;
 
 public class InvoiceView extends JPanel {
     private final Font FONT_LABEL = new Font("Segoe UI", java.awt.Font.PLAIN, 16);
-    private final Font FONT_TITLE = new Font("Segoe UI", Font.BOLD, 19); 
+    private final Font FONT_TITLE = new Font("Segoe UI", Font.BOLD, 19);
 
     private final int HGAP = 11;
     private final int VGAP = 11;
@@ -128,7 +128,7 @@ public class InvoiceView extends JPanel {
         loadAllInvoices();
     }
 
-    private void initBottomContainer(){
+    private void initBottomContainer() {
         bottomContainer = new JPanel(new FlowLayout(FlowLayout.TRAILING));
         exportExcelBtn = new JButton("Xuất Excel");
         exportExcelBtn.setPreferredSize(new Dimension(BUTTON_WIDTH, invoiceDetailBtn.getPreferredSize().height));
@@ -140,11 +140,10 @@ public class InvoiceView extends JPanel {
 
     private void initInfoPanel() {
         infoPanel = new JPanel(new GridLayout(6, 1));
-        infoPanel.setPreferredSize(new Dimension(355, 0));
+        infoPanel.setPreferredSize(new Dimension(395, 0));
         infoPanel.setBorder(BorderFactory.createCompoundBorder(
-            createTitledBorder("Thông tin hoá đơn"),
-            BorderFactory.createEmptyBorder(PADDING, PADDING, PADDING, PADDING))
-        );
+                createTitledBorder("Thông tin hoá đơn"),
+                BorderFactory.createEmptyBorder(PADDING, PADDING, PADDING, PADDING)));
 
         lblInvoiceID = new JLabel();
         lblInvoiceID.setFont(FONT_LABEL);
@@ -161,54 +160,52 @@ public class InvoiceView extends JPanel {
         lblTotal = new JLabel();
         lblTotal.setFont(FONT_LABEL);
 
-
         invoiceDetailBtn = new JButton("Xem chi tiết");
         invoiceDetailBtn.setFocusPainted(false);
         invoiceDetailBtn.setPreferredSize(new Dimension(BUTTON_WIDTH, invoiceDetailBtn.getPreferredSize().height));
 
         infoPanel.add(createRow(createLabel("Mã hoá đơn: ", LABEL_PREFERRED_WIDTH,
-                                FONT_LABEL),
-                                lblInvoiceID, FlowLayout.LEADING));
+                FONT_LABEL),
+                lblInvoiceID, FlowLayout.LEADING));
         infoPanel.add(createRow(createLabel("Khách hàng: ", LABEL_PREFERRED_WIDTH,
-                                FONT_LABEL),
-                                lblCustomer, FlowLayout.LEADING));
+                FONT_LABEL),
+                lblCustomer, FlowLayout.LEADING));
         infoPanel.add(createRow(createLabel("Nhân viên: ", LABEL_PREFERRED_WIDTH,
-                                FONT_LABEL),
-                                lblEmployee, FlowLayout.LEADING));
+                FONT_LABEL),
+                lblEmployee, FlowLayout.LEADING));
         infoPanel.add(createRow(createLabel("Thời gian lập: ", LABEL_PREFERRED_WIDTH,
-                                FONT_LABEL),
-                                lblDateTime, FlowLayout.LEADING));
+                FONT_LABEL),
+                lblDateTime, FlowLayout.LEADING));
         infoPanel.add(createRow(createLabel("Tổng tiền: ", LABEL_PREFERRED_WIDTH,
-                                FONT_LABEL),
-                                lblTotal, FlowLayout.LEADING));
+                FONT_LABEL),
+                lblTotal, FlowLayout.LEADING));
         infoPanel.add(createRow(null, invoiceDetailBtn, FlowLayout.TRAILING));
     }
 
     private void initFilterPanel() {
         filterPanel = new JPanel(new GridLayout(6, 1, 0, 5));
         filterPanel.setBorder(BorderFactory.createCompoundBorder(
-            createTitledBorder("Bộ lọc"),
-            BorderFactory.createEmptyBorder(PADDING, PADDING, PADDING, PADDING))
-        );
+                createTitledBorder("Bộ lọc"),
+                BorderFactory.createEmptyBorder(PADDING, PADDING, PADDING, PADDING)));
 
         txtInvoiceID = new JTextField(TEXTFIELD_COLUMNS);
         txtCustomerID = new JTextField(TEXTFIELD_COLUMNS);
         txtEmployeeID = new JTextField(TEXTFIELD_COLUMNS);
 
-        ComboItem[] dateItems = { 
-            new ComboItem("Tất cả", "All"),
-            new ComboItem("Hôm nay", "Today"),
-            new ComboItem("Hôm qua", "Yesterday"),
-            new ComboItem("Trong 7 ngày", "7Days"),
-            new ComboItem("Trong 31 ngày", "31Days"),
-            new ComboItem("Tuần này", "ThisWeek"),
-            new ComboItem("Tháng này", "ThisMonth"),
-            new ComboItem("Năm nay", "ThisYear"),
-            new ComboItem("Tuỳ chọn", "Custom")
+        ComboItem[] dateItems = {
+                new ComboItem("Tất cả", "All"),
+                new ComboItem("Hôm nay", "Today"),
+                new ComboItem("Hôm qua", "Yesterday"),
+                new ComboItem("Trong 7 ngày", "7Days"),
+                new ComboItem("Trong 31 ngày", "31Days"),
+                new ComboItem("Tuần này", "ThisWeek"),
+                new ComboItem("Tháng này", "ThisMonth"),
+                new ComboItem("Năm nay", "ThisYear"),
+                new ComboItem("Tuỳ chọn", "Custom")
         };
 
         cbxDateCb = new JComboBox<>(dateItems);
-        
+
         cbxDateCb.setPreferredSize(txtCustomerID.getPreferredSize());
 
         Date today = new Date();
@@ -234,22 +231,22 @@ public class InvoiceView extends JPanel {
         buttonContainer.add(resetFilterBtn);
 
         filterPanel.add(createRow(createLabel("Mã hoá đơn: ", LABEL_PREFERRED_WIDTH,
-                                  FONT_LABEL),
-                                  txtInvoiceID, FlowLayout.LEADING));
+                FONT_LABEL),
+                txtInvoiceID, FlowLayout.LEADING));
         filterPanel.add(createRow(createLabel("Mã khách hàng: ", LABEL_PREFERRED_WIDTH,
-                                  FONT_LABEL),
-                                  txtCustomerID, FlowLayout.LEADING));
+                FONT_LABEL),
+                txtCustomerID, FlowLayout.LEADING));
         filterPanel.add(createRow(createLabel("Mã nhân viên: ", LABEL_PREFERRED_WIDTH,
-                                  FONT_LABEL),
-                                  txtEmployeeID, FlowLayout.LEADING));
+                FONT_LABEL),
+                txtEmployeeID, FlowLayout.LEADING));
         filterPanel.add(createRow(createLabel("Chọn thời gian: ", LABEL_PREFERRED_WIDTH,
-                                  FONT_LABEL),
-                                  cbxDateCb, FlowLayout.LEADING));
+                FONT_LABEL),
+                cbxDateCb, FlowLayout.LEADING));
         filterPanel.add(customDateContainer);
         filterPanel.add(buttonContainer);
     }
 
-    public void setListeners(){
+    public void setListeners() {
         applyFilterBtn.addActionListener(e -> applyFilter());
 
         resetFilterBtn.addActionListener(e -> resetFilter());
@@ -258,14 +255,15 @@ public class InvoiceView extends JPanel {
 
         invoiceDetailBtn.addActionListener((e) -> {
             int selectedRow = invoiceTable.getSelectedRow();
-            if(selectedRow >= 0){
+            if (selectedRow >= 0) {
                 showInvoiceDetails((String) invoiceTable.getValueAt(selectedRow, 0));
-            } else{
-                JOptionPane.showMessageDialog(null, "Vui lòng chọn một hoá đơn để xem chi tiết", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(null, "Vui lòng chọn một hoá đơn để xem chi tiết", "Thông báo",
+                        JOptionPane.INFORMATION_MESSAGE);
             }
 
         });
-        
+
         cbxDateCb.addActionListener((e) -> {
             ComboItem selectedItem = (ComboItem) (cbxDateCb.getSelectedItem());
             String logicValue = selectedItem.getLogicValue();
@@ -277,14 +275,13 @@ public class InvoiceView extends JPanel {
             }
         });
 
-
         ListSelectionModel model = invoiceTable.getSelectionModel();
         model.addListSelectionListener(e -> {
             int selectedRowIndex = invoiceTable.getSelectedRow();
             updateInfoPanel(selectedRowIndex);
         });
     }
-    
+
     public void updateInfoPanel(int selectedRowIndex) {
         if (selectedRowIndex >= 0) {
             String maHoaDon = invoiceTableModel.getValueAt(selectedRowIndex, 0).toString();
@@ -297,15 +294,15 @@ public class InvoiceView extends JPanel {
             lblEmployee.setText(invoice.getMaNV() + " - " + invoice.getTenNV());
             lblDateTime.setText(UtilsDateFormat.formatDateTime(invoice.getThoiGianLap()));
             lblTotal.setText(priceFormatter.format(invoice.getTongTien()) + " VNĐ");
-            
+
             infoPanel.setIgnoreRepaint(false);
             infoPanel.repaint();
         }
     }
-    
-    public void clearInfoPanel(){
+
+    public void clearInfoPanel() {
         infoPanel.setIgnoreRepaint(true);
-        
+
         lblInvoiceID.setText("________");
         lblCustomer.setText("________");
         lblEmployee.setText("________");
@@ -316,7 +313,7 @@ public class InvoiceView extends JPanel {
         infoPanel.repaint();
     }
 
-    public void applyFilter(){
+    public void applyFilter() {
         String maHoaDon = txtInvoiceID.getText().trim().toUpperCase();
         String maKhachHang = txtCustomerID.getText().trim().toUpperCase();
         String maNhanVien = txtEmployeeID.getText().trim().toUpperCase();
@@ -326,8 +323,8 @@ public class InvoiceView extends JPanel {
         Date customFromDate, customToDate;
 
         Date[] refDates = new Date[3];
-        //refDates[0]: fromDate
-        //refDates[1]: toDate
+        // refDates[0]: fromDate
+        // refDates[1]: toDate
 
         customFromDate = fromDatePicker.getDate();
         customToDate = toDatePicker.getDate();
@@ -336,23 +333,25 @@ public class InvoiceView extends JPanel {
         fromDate = refDates[0];
         toDate = refDates[1];
 
-        String invalidMessages = invoiceBUS.validateFilter(dateOption, maHoaDon, maKhachHang, maNhanVien, fromDate, toDate);
+        String invalidMessages = invoiceBUS.validateFilter(dateOption, maHoaDon, maKhachHang, maNhanVien, fromDate,
+                toDate);
 
-        if(!invalidMessages.isEmpty()){
+        if (!invalidMessages.isEmpty()) {
             showInvalidMessages("Sai định dạng", invalidMessages);
-        } else{
+        } else {
             ArrayList<InvoiceDTO> invoices = invoiceBUS.getFilteredInvoices(maHoaDon,
-                                                                            maKhachHang,
-                                                                            maNhanVien,
-                                                                            fromDate,
-                                                                            toDate);
+                    maKhachHang,
+                    maNhanVien,
+                    fromDate,
+                    toDate);
             loadInvoices(invoices);
         }
     }
 
-    public void showInvalidMessages(String invalidTitle, String invalidMessages){
-        JOptionPane.showMessageDialog(null, invalidMessages, invalidTitle,  JOptionPane.ERROR_MESSAGE);   
+    public void showInvalidMessages(String invalidTitle, String invalidMessages) {
+        JOptionPane.showMessageDialog(null, invalidMessages, invalidTitle, JOptionPane.ERROR_MESSAGE);
     }
+
     public void resetFilter() {
         filterPanel.setIgnoreRepaint(true);
 
@@ -372,61 +371,64 @@ public class InvoiceView extends JPanel {
         loadAllInvoices();
     }
 
-    public void showInvoiceDetails(String maHoaDon){
+    public void showInvoiceDetails(String maHoaDon) {
         new InvoiceDetailDialog(maHoaDon);
     }
 
-    public void exportExcel(){
+    public void exportExcel() {
         InvoiceExportDialog exportDialog = new InvoiceExportDialog();
-        if(exportDialog.getConfirmStatus() == false) return;
+        if (exportDialog.getConfirmStatus() == false)
+            return;
         String selectedOption = exportDialog.getSelectedOption();
 
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Chọn địa điểm lưu");
         int userSelection = fileChooser.showSaveDialog(null);
-        
-        if(userSelection == JFileChooser.APPROVE_OPTION){
+
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
             File fileToSave = fileChooser.getSelectedFile();
             String path = fileToSave.getAbsolutePath();
-            if(!path.toLowerCase().endsWith("xlsx")){
+            if (!path.toLowerCase().endsWith("xlsx")) {
                 path += ".xlsx";
             }
-            
+
             DefaultTableModel toExportModel = new DefaultTableModel();
-            if(selectedOption == "AllInvoices"){
+            if (selectedOption == "AllInvoices") {
                 ArrayList<InvoiceDTO> invoices = invoiceBUS.getAllInvoices();
-                String[] columnsNames = { "Mã hoá đơn", "Mã khách hàng", "Mã nhân viên", "Ngày lập", "Giờ lập", "Tổng tiền" };
+                String[] columnsNames = { "Mã hoá đơn", "Mã khách hàng", "Mã nhân viên", "Ngày lập", "Giờ lập",
+                        "Tổng tiền" };
                 toExportModel = new DefaultTableModel(columnsNames, 0);
-                for(InvoiceDTO invoice : invoices){
+                for (InvoiceDTO invoice : invoices) {
                     toExportModel.addRow(new Object[] {
-                        invoice.getMaHD(),
-                        invoice.getMaKH(),
-                        invoice.getMaNV(),
-                        new SimpleDateFormat("dd/MM/yyyy").format(invoice.getNgayLap()),
-                        new SimpleDateFormat("HH:mm:ss").format(invoice.getGioNhap()),
-                        priceFormatter.format(invoice.getTongTien())
+                            invoice.getMaHD(),
+                            invoice.getMaKH(),
+                            invoice.getMaNV(),
+                            new SimpleDateFormat("dd/MM/yyyy").format(invoice.getNgayLap()),
+                            new SimpleDateFormat("HH:mm:ss").format(invoice.getGioNhap()),
+                            priceFormatter.format(invoice.getTongTien())
                     });
                 }
-            } else
-            if(selectedOption == "CurrentInvoices"){
+            } else if (selectedOption == "CurrentInvoices") {
                 toExportModel = invoiceTableModel;
             }
 
             Boolean success = invoiceBUS.exportExcel(toExportModel, path);
-            if(success){
-                JOptionPane.showMessageDialog(null, "Xuất Excel thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-            } else{
-                JOptionPane.showMessageDialog(null, "Xuát Excel không thành công.", "Thông báo", JOptionPane.ERROR_MESSAGE);
+            if (success) {
+                JOptionPane.showMessageDialog(null, "Xuất Excel thành công!", "Thông báo",
+                        JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(null, "Xuát Excel không thành công.", "Thông báo",
+                        JOptionPane.ERROR_MESSAGE);
             }
         }
     }
 
-    public void loadAllInvoices(){
+    public void loadAllInvoices() {
         ArrayList<InvoiceDTO> invoices = invoiceBUS.getAllInvoices();
         loadInvoices(invoices);
     }
 
-    public void loadInvoices(ArrayList<InvoiceDTO> invoices){
+    public void loadInvoices(ArrayList<InvoiceDTO> invoices) {
         invoiceTableModel.setRowCount(0);
         for (InvoiceDTO invoice : invoices) {
             invoiceTableModel.addRow(new Object[] {
@@ -443,14 +445,14 @@ public class InvoiceView extends JPanel {
         clearInfoPanel();
     }
 
-    public void styleTable(){
+    public void styleTable() {
         invoiceTable.setRowHeight(35);
         invoiceTable.setShowGrid(true);
         invoiceTable.setGridColor(new Color(230, 230, 230));
 
         UtilsJTableStyle.setStyleTableHeader(invoiceTable, FONT_TITLE, Color.WHITE, new Color(70, 130, 180));
         UtilsJTableStyle.setStyleTableCell(invoiceTable, FONT_LABEL);
-        
+
         UtilsJTableStyle.setAlignmentTableCell(invoiceTable, 0, SwingConstants.CENTER);
         UtilsJTableStyle.setAlignmentTableCell(invoiceTable, 1, SwingConstants.CENTER);
         UtilsJTableStyle.setAlignmentTableCell(invoiceTable, 2, SwingConstants.CENTER);
@@ -459,30 +461,33 @@ public class InvoiceView extends JPanel {
         UtilsJTableStyle.setAlignmentTableCell(invoiceTable, 5, SwingConstants.RIGHT);
     }
 
-    public void checkEmptyTable(){
+    public void checkEmptyTable() {
         emptyLabel.setVisible(invoiceTable.getRowCount() == 0);
     }
 
-    public TitledBorder createTitledBorder(String title){
+    public TitledBorder createTitledBorder(String title) {
         TitledBorder border = BorderFactory.createTitledBorder(title);
         border.setTitleFont(FONT_TITLE);
         return border;
     }
 
-    private JPanel createRow(JLabel label, JComponent component, int rowAlignment){
+    private JPanel createRow(JLabel label, JComponent component, int rowAlignment) {
         JPanel panel = new JPanel(new FlowLayout(rowAlignment));
-        if(label != null) panel.add(label);
+        if (label != null)
+            panel.add(label);
         panel.add(component);
         return panel;
     }
 
-    private JLabel createLabel(String text, int width, Font font){
+    private JLabel createLabel(String text, int width, Font font) {
         JLabel lbl = new JLabel(text);
-        if(font != null) lbl.setFont(font);
+        if (font != null)
+            lbl.setFont(font);
         lbl.setHorizontalAlignment(JLabel.LEADING);
         lbl.setPreferredSize(new Dimension(width, lbl.getPreferredSize().height));
         return lbl;
     }
+
     public static void main(String[] args) {
 
     }

@@ -1,13 +1,40 @@
-public Boolean update(String maKH, String tenKH, String diaChi, String sdt, int trangThai){
+private ArrayList<ProductDTO> dssp = new ArrayList<>();
+public ArrayList<ProductDTO> selectAll()
+{
     Connection con = UtilsJDBC.getConnectDB();
-    String sql = "UPDATE customer SET TenKH = ?, DiaChi = ?, SDT = ?, TrangThai = ? WHERE MaKH = ?";
+    dssp.clear();
+    try{
+        PreparedStatement stmt = con.prepareStatement("SELECT * FROM product");
+        ResultSet rs = stmt.executeQuery();
+        while(rs.next())
+        {
+            String maSP = rs.getString("MaSP");
+            String maLSP = rs.getString("MaLSP");
+            String tenSP = rs.getString("TenSP");
+            float donGia = rs.getString("DonGia");
+            int SoLuong = rs.getString("SoLuong");
+            String hinhAnh = rs.getString("HinhAnh");
+            int trangThai = rs.getString("TrangThai");
+            ProductDTO sp = new ProductDTO(maSP, maLSP, tenSP, donGia, soLuong, hinhAnh, trangThai);
+            dssp.add(sp);
+        }
+    }
+
+}
+
+
+public Boolean add (ProductDTO sp){
+    Connection con = UtilsJDBC.getConnectDB();
+    String sql = "INSERT INTO product (MaSP, MaLSP, TenSP, DonGia, SoLuong, HinhAnh, TrangThai) VALUES (?, ?, ?, ?, ?, ?, ?)";
     try{
         PreparedStatement stmt = con.prepareStatement(sql);
-        stmt.setString(1, tenKH);
-        stmt.setString(2, diaChi);
-        stmt.setString(3, sdt);
-        stmt.setInt(4, trangThai);
-        stmt.setString(5, maKH);
+        stmt.setString(1, sp.getMaSP());
+        stmt.setString(2, sp.getMaLSP());
+        stmt.setString(3, sp.getTenSP());
+        stmt.setFloat(4, sp.getDonGia());
+        stmt.setInt(5, sp.getSoLuong());
+        stmt.setString(6, sp.getHinhAnh());
+        stmt.setInt(7, sp.getTrangThai());
         int rowsAffected = stmt.executeUpdate();
         return rowsAffected > 0;
 
@@ -18,5 +45,22 @@ public Boolean update(String maKH, String tenKH, String diaChi, String sdt, int 
     }
     finally{
         UtilsJDBC.closeConnection();
+    }
+}
+
+public Boolean update (ProductDTO sp){
+    Connection con = UtilsJDBC.getConnectDB();
+    String sql = "UPDATE product SET MaLSP = ?, TenSP = ?, DonGia = ?, SoLuong = ?, HinhAnh = ?, TrangThai = ? WHERE MaSP = ?";
+    try{
+        PreparedStatement stmt = con.prepareStatement(sql);
+        stmt.setString(1,sp.getMaLSP())
+        stmt.setString(2,sp.getTenSP())
+        stmt.setFloat(3,sp.getDonGia())
+        stmt.setInt(4,sp.getSoLuong())
+        stmt.setString(5,sp.getHinhAnh())
+        stmt.setInt(6,sp.getTrangThai())
+        stmt.setString(7,sp.getMaSP())
+        int rowsAffected = stmt.executeUpdate();
+        return rowsAffected > 0;
     }
 }
