@@ -67,6 +67,13 @@ public class ProductDAO {
         }
     }
 
+
+
+
+
+
+
+
     // Cập nhật thông tin sản phẩm
     public Boolean update(ProductDTO product) {
         Connection con = UtilsJDBC.getConnectDB();

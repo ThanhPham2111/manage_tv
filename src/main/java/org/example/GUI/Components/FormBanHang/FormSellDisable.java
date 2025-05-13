@@ -247,6 +247,7 @@ public class FormSellDisable extends JPanel {
                 null, Color.black));
         String nextInvoiceID = invoiceBUS.getNextInvoiceID();
         txtMaHD.setText(nextInvoiceID);
+        txtMaHD.setEditable(false);
         panel9.add(txtMaHD);
         textField10.setPreferredSize(new Dimension(0, 55));
         panel9.add(textField10);
@@ -287,16 +288,19 @@ public class FormSellDisable extends JPanel {
         } else {
             txtNhanVien.setText("Không tìm thấy nhân viên");
         }
+        txtNhanVien.setEditable(false);
         panel9.add(txtNhanVien);
         txtNgayLap.setPreferredSize(new Dimension(200, 55));
         txtNgayLap.setBorder(new TitledBorder(null, "Ngày lập", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
                 null, Color.black));
         txtNgayLap.setText(currentDate);
+        txtNgayLap.setEditable(false);
         panel9.add(txtNgayLap);
         txtGioLap.setPreferredSize(new Dimension(200, 55));
         txtGioLap.setBorder(new TitledBorder(null, "Giờ lập", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION, null,
                 Color.black));
         txtGioLap.setText(currentTime);
+        txtGioLap.setEditable(false);
         panel9.add(txtGioLap);
         panel8.add(panel9, BorderLayout.NORTH);
 
